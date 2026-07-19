@@ -1,7 +1,7 @@
-# 3. script.js
+# 2. styles.css (ACTUALIZADO)
 
-Copia todo el contenido de este bloque y pégalo en tu archivo `script.js` en GitHub:
+Copia este código en tu archivo `styles.css` en GitHub:
 
-```javascript
-{{DATA:SCREEN:SCREEN_25}} JS source
+```css
+{{DATA:SCREEN:SCREEN_58}} CSS source
 ```
