@@ -2,580 +2,257 @@
 
 <html class="dark" lang="es"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>TopoAR Pro - Master Demo SPA</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Next-Gen Field Logic - CAD/AR Viewer</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<style>
-        :root {
-            --primary: #f97316;
-            --surface: #1c110b;
-        }
-        .glass-panel {
-            background: rgba(28, 17, 11, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .led-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #f973164d;
-            border-radius: 10px;
-        }
-        .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(249, 115, 22, 0.2);
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 5;
-            animation: scan 4s linear infinite;
-        }
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-        
-        @keyframes progress-stripes {
-            from { background-position: 1rem 0; }
-            to { background-position: 0 0; }
-        }
-        .progress-animate {
-            background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
-            background-size: 1rem 1rem;
-            animation: progress-stripes 1s linear infinite;
-        }
-
-        #ar-camera-feed {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-        }
-
-        /* Layer Drawer Slide Animation */
-        .drawer-closed { transform: translateX(100%); }
-        .drawer-open { transform: translateX(0); }
-        .transition-drawer { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
           theme: {
             extend: {
               "colors": {
-                "primary": "#f97316",
-                "on-primary": "#ffffff",
-                "primary-container": "#f97316",
-                "on-primary-container": "#ffffff",
-                "surface": "#1c110b",
-                "surface-dim": "#1c110b",
-                "surface-bright": "#45362f",
-                "surface-container": "#291d16",
-                "surface-container-high": "#352720",
-                "on-surface": "#f6ded3",
-                "on-surface-variant": "#e0c0b1",
-                "outline": "#a78b7d",
-                "error": "#ffb4ab",
-                "on-error": "#690005"
+                      "surface": "#1c110b",
+                      "error-container": "#93000a",
+                      "on-primary-fixed": "#341100",
+                      "secondary-fixed": "#d5e3fd",
+                      "primary-fixed": "#ffdbca",
+                      "on-background": "#f6ded3",
+                      "on-tertiary": "#003351",
+                      "surface-container-highest": "#40322a",
+                      "background": "#1c110b",
+                      "secondary-fixed-dim": "#b9c7e0",
+                      "on-tertiary-fixed": "#001d32",
+                      "on-surface-variant": "#e0c0b1",
+                      "inverse-surface": "#f6ded3",
+                      "on-error": "#690005",
+                      "surface-container-lowest": "#160c06",
+                      "on-primary-fixed-variant": "#783200",
+                      "secondary-container": "#3c4a5e",
+                      "tertiary-container": "#00a2f4",
+                      "surface-container-low": "#251913",
+                      "on-surface": "#f6ded3",
+                      "surface-tint": "#ffb690",
+                      "on-secondary": "#233144",
+                      "on-primary": "#552100",
+                      "outline-variant": "#584237",
+                      "primary-container": "#f97316",
+                      "error": "#ffb4ab",
+                      "on-secondary-fixed-variant": "#3a485c",
+                      "secondary": "#b9c7e0",
+                      "on-secondary-container": "#abb9d2",
+                      "surface-container-high": "#352720",
+                      "surface-variant": "#40322a",
+                      "surface-bright": "#45362f",
+                      "surface-container": "#291d16",
+                      "on-primary-container": "#582200",
+                      "tertiary-fixed-dim": "#93ccff",
+                      "on-secondary-fixed": "#0d1c2f",
+                      "on-error-container": "#ffdad6",
+                      "on-tertiary-container": "#003554",
+                      "tertiary": "#93ccff",
+                      "inverse-primary": "#9d4300",
+                      "primary-fixed-dim": "#ffb690",
+                      "tertiary-fixed": "#cde5ff",
+                      "outline": "#a78b7d",
+                      "on-tertiary-fixed-variant": "#004b74",
+                      "surface-dim": "#1c110b",
+                      "inverse-on-surface": "#3c2d26",
+                      "primary": "#ffb690"
               },
               "borderRadius": {
-                "DEFAULT": "0.5rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem"
-              },
-              "spacing": {
-                "gutter": "16px",
-                "container-margin": "24px"
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
               },
               "fontFamily": {
-                "headline-lg": ["Geist"],
-                "body-lg": ["Inter"],
-                "data-mono": ["JetBrains Mono"]
+                      "headline-lg": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "display-lg": ["Geist"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-lg": ["Inter"],
+                      "title-md": ["Inter"]
               }
             }
           }
         }
     </script>
-</head>
-<body class="bg-surface text-on-surface font-body-lg min-h-screen overflow-x-hidden selection:bg-primary/30">
-<!-- Compact Header -->
-<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/5 px-4 py-2 flex justify-between items-center h-12">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">precision_manufacturing</span>
-<h1 class="font-data-mono text-sm font-bold text-primary tracking-tighter uppercase">TOPO_OS_v2.5</h1>
-</div>
-<div class="flex items-center gap-3">
-<div class="flex items-center gap-1.5 px-2 py-0.5 bg-surface-container rounded-full border border-white/5">
-<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 led-pulse"></span>
-<span class="font-data-mono text-[9px] text-on-surface-variant uppercase">RTK: 0.002m</span>
-</div>
-<span class="material-symbols-outlined text-primary text-lg">signal_cellular_alt</span>
-</div>
-</header>
-<!-- View: Control Center (Home) -->
-<main class="view-section active pt-16 pb-32 px-container-margin max-w-7xl mx-auto space-y-6" id="view-control">
-<!-- Consolidated System HUD -->
-<section class="glass-panel rounded-xl p-3 flex justify-around items-center divide-x divide-white/10">
-<div class="flex flex-col items-center px-4">
-<span class="text-[9px] font-bold text-on-surface-variant tracking-widest uppercase mb-1">Status</span>
-<span class="text-xs font-headline-lg flex items-center gap-1.5 text-emerald-400">
-<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> OK
-            </span>
-</div>
-<div class="flex flex-col items-center px-4">
-<span class="text-[9px] font-bold text-on-surface-variant tracking-widest uppercase mb-1">Sensor</span>
-<span class="text-xs font-headline-lg">LiDAR+GPS</span>
-</div>
-<div class="flex flex-col items-center px-4">
-<span class="text-[9px] font-bold text-on-surface-variant tracking-widest uppercase mb-1">Battery</span>
-<span class="text-xs font-headline-lg text-primary">88%</span>
-</div>
-</section>
-<!-- Active Project -->
-<section class="glass-panel rounded-xl overflow-hidden group">
-<div class="h-32 relative">
-<img class="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxk1ESfpS89lgwNs_Yp1RRUZw8X7kkODGsDeUHLsxJbj5tXn7MpiaRC7ll5vDlAmnF1Y7S0pje1BzFCDL4xTmypVDW9IvhEmiljlsfKQ4hOy0MpC7I6-e892v-1qFga-DvrfBTePeDKI5zzkGF6n12w6mfZVfA3_b_xQguzKMFrnoCtul3WenUWQMvNPOg5898iz16jqR2UIbtHPuZit9K7TXCzHdaISc1z6OSYRbm79KuocGarClC"/>
-<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
-<span class="absolute top-2 left-2 bg-primary text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">Sesión Activa</span>
-</div>
-<div class="p-4 flex justify-between items-center">
-<div>
-<h2 class="text-lg font-headline-lg">RECONQUISTA SF</h2>
-<p class="text-[10px] text-on-surface-variant">Sector Industrial Sur • ID: #9921</p>
-</div>
-<button class="bg-primary text-white px-4 py-2 rounded-lg text-xs font-bold active:scale-95 transition-transform uppercase" onclick="switchView('view-ar')">HUD AR</button>
-</div>
-</section>
-<!-- Carga de Planos Section -->
-<section class="glass-panel rounded-xl p-6 border-2 border-dashed border-primary/20 text-center cursor-pointer hover:bg-primary/5 transition-all relative overflow-hidden" id="upload-flow-container">
-<input accept=".dwg,.dxf,.ifc" class="hidden" id="cad-upload-input" type="file"/>
-<div id="upload-state-initial">
-<span class="material-symbols-outlined text-primary text-4xl mb-3">upload_file</span>
-<h3 class="text-md font-headline-lg mb-1 uppercase tracking-tight text-on-surface">Cargar Base Vectorial</h3>
-<p class="text-[11px] text-on-surface-variant mb-4">Actualizar DWG/DXF del proyecto.</p>
-<div class="flex justify-center gap-1.5">
-<span class="bg-surface-container-high px-2 py-0.5 rounded text-[9px] font-data-mono">.DWG</span>
-<span class="bg-surface-container-high px-2 py-0.5 rounded text-[9px] font-data-mono">.DXF</span>
-</div>
-</div>
-<div class="hidden w-full max-w-xs mx-auto flex flex-col items-center" id="upload-state-progress">
-<div class="w-full bg-surface-container-high rounded-full h-1 mb-3 overflow-hidden">
-<div class="bg-primary h-full w-0 transition-all duration-300" id="upload-progress-bar"></div>
-</div>
-<span class="font-data-mono text-[10px] text-primary" id="upload-status-text">Procesando...</span>
-</div>
-<div class="hidden flex flex-col items-center" id="upload-state-success">
-<span class="material-symbols-outlined text-emerald-400 text-4xl mb-2">check_circle</span>
-<h3 class="text-md font-headline-lg">Plano 1.dwg cargado</h3>
-<button class="mt-2 text-[10px] font-bold text-primary underline uppercase" onclick="switchView('view-ar')">Iniciar AR</button>
-</div>
-</section>
-<!-- System Log -->
-<section class="glass-panel rounded-xl overflow-hidden">
-<div class="bg-surface-container-high px-4 py-1.5 border-b border-white/5 flex justify-between items-center">
-<span class="text-[9px] font-bold text-on-surface-variant flex items-center gap-1 uppercase tracking-widest"><span class="material-symbols-outlined text-xs">terminal</span> System Log</span>
-<span class="text-[8px] text-emerald-400 font-data-mono uppercase">Live</span>
-</div>
-<div class="p-3 h-24 overflow-y-auto custom-scrollbar font-data-mono text-[10px] space-y-1 opacity-70" id="system-log-content">
-<div class="flex gap-2"><span>[16:40]</span> <span class="text-on-surface">Motor LiDAR inicializado.</span></div>
-<div class="flex gap-2"><span>[16:41]</span> <span class="text-emerald-400">Sincronización GPS: Reconquista, SF.</span></div>
-<div class="flex gap-2"><span>[16:42]</span> <span class="text-primary">Plano 1.dwg cargado correctamente.</span></div>
-</div>
-</section>
-</main>
-<!-- View: Verify (Stages) -->
-<main class="view-section pt-16 pb-32 px-container-margin max-w-3xl mx-auto space-y-6" id="view-verify">
-<header class="mb-6">
-<h2 class="text-xl font-headline-lg uppercase tracking-tight">Gestión de Etapas</h2>
-<p class="text-xs text-on-surface-variant">Proyecto: Reconquista | ID: #9921-SF</p>
-</header>
-<div class="relative pl-6 border-l-2 border-white/10 ml-3 space-y-6">
-<div class="relative">
-<div class="absolute -left-[33px] top-0 w-4 h-4 bg-emerald-500 rounded-full border-2 border-surface flex items-center justify-center">
-<span class="material-symbols-outlined text-white text-[10px]">check</span>
-</div>
-<div class="glass-panel p-4 rounded-xl opacity-60">
-<div class="flex justify-between items-center mb-1">
-<h3 class="text-sm font-bold line-through">Excavación</h3>
-<span class="text-[8px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded uppercase">Completado</span>
-</div>
-<p class="text-[10px] font-data-mono">LiDAR Verificado: 2024-05-10</p>
-</div>
-</div>
-<div class="relative">
-<div class="absolute -left-[33px] top-0 w-4 h-4 bg-primary rounded-full border-2 border-surface led-pulse"></div>
-<div class="glass-panel p-4 rounded-xl border border-primary/20">
-<div class="flex justify-between items-start mb-3">
-<div>
-<h3 class="text-md font-headline-lg text-primary uppercase">Montaje de Vigas</h3>
-<p class="text-[10px] text-on-surface-variant">Activo: Sector A - Nivel 0</p>
-</div>
-<span class="text-lg font-data-mono text-primary">42%</span>
-</div>
-<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden mb-4">
-<div class="h-full bg-primary progress-animate" style="width: 42%;"></div>
-</div>
-<button class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 text-xs uppercase" onclick="switchView('view-ar')">
-<span class="material-symbols-outlined text-md">view_in_ar</span> Lanzar HUD AR
-                </button>
-</div>
-</div>
-</div>
-</main>
-<!-- View: AR Experience (HUD) -->
-<main class="view-section fixed inset-0 z-40 bg-black pt-12 overflow-hidden" id="view-ar">
-<video autoplay="" id="ar-camera-feed" muted="" playsinline=""></video>
-<!-- CAD Vector Overlay -->
-<svg class="absolute inset-0 w-full h-full pointer-events-none z-10 transition-opacity duration-300" id="ar-vector-overlay" style="opacity: 0.9" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<pattern height="40" id="grid-ar" patternunits="userSpaceOnUse" width="40">
-<path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(249, 115, 22, 0.1)" stroke-width="0.5"></path>
-</pattern>
-</defs>
-<rect fill="url(#grid-ar)" height="100%" width="100%"></rect>
-<!-- Layers Control -->
-<g fill="rgba(249, 115, 22, 0.2)" id="layer-vigas" stroke="#f97316" stroke-width="3">
-<path d="M 50 200 L 350 200 L 350 300 L 50 300 Z"></path>
-<path d="M 50 350 L 350 350 L 350 450 L 50 450 Z"></path>
-<path d="M 50 500 L 350 500 L 350 600 L 50 600 Z"></path>
-<path d="M 50 200 L 350 300" opacity="0.6" stroke-dasharray="6 4"></path>
-<path d="M 350 200 L 50 300" opacity="0.6" stroke-dasharray="6 4"></path>
-</g>
-<g class="hidden" fill="rgba(249, 115, 22, 0.4)" id="layer-columnas" stroke="#f97316" stroke-width="3">
-<circle cx="50" cy="200" r="15"></circle>
-<circle cx="350" cy="200" r="15"></circle>
-<circle cx="50" cy="300" r="15"></circle>
-<circle cx="350" cy="300" r="15"></circle>
-</g>
-<text fill="#f97316" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" x="200" y="190">VIGA_STR_01 [24.50m]</text>
-</svg>
-<div class="scanline z-20"></div>
-<!-- Minimal HUD Overlays -->
-<div class="absolute inset-0 p-4 flex flex-col pointer-events-none pt-16 pb-24 z-30">
-<!-- Top HUD Metrics (Compact) -->
-<div class="flex justify-between items-start">
-<div class="space-y-2 pointer-events-auto">
-<button class="glass-panel p-2 rounded-lg flex items-center gap-2 border border-primary/40 text-primary" onclick="toggleDrawer()">
-<span class="material-symbols-outlined text-lg">layers</span>
-<span class="text-[9px] font-bold uppercase tracking-widest">CAPAS</span>
-</button>
-</div>
-<div class="glass-panel px-3 py-1.5 rounded-lg flex gap-4 pointer-events-auto border border-white/10 items-center">
-<div class="flex flex-col">
-<span class="text-[7px] text-on-surface-variant uppercase">GYRO</span>
-<span class="text-xs font-data-mono text-primary" id="gyro-stability">99.8%</span>
-</div>
-<div class="w-px h-4 bg-white/10"></div>
-<div class="flex flex-col">
-<span class="text-[7px] text-on-surface-variant uppercase">GPS</span>
-<span class="text-xs font-data-mono text-emerald-400">0.002m</span>
-</div>
-</div>
-</div>
-<!-- Central Reticle -->
-<div class="flex-grow flex items-center justify-center">
-<div class="relative w-32 h-32 flex items-center justify-center">
-<div class="absolute inset-0 border border-primary/20 rounded-full animate-ping opacity-10"></div>
-<div class="absolute top-0 left-0 w-4 h-4 border-t border-l border-primary"></div>
-<div class="absolute top-0 right-0 w-4 h-4 border-t border-r border-primary"></div>
-<div class="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-primary"></div>
-<div class="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-primary"></div>
-<div class="w-1 h-1 bg-primary rounded-full shadow-[0_0_10px_#f97316]"></div>
-</div>
-</div>
-<!-- Ergonomic Controls (Thumb Zone) -->
-<div class="space-y-4 pointer-events-auto">
-<!-- Coordinates Bar -->
-<div class="glass-panel p-3 rounded-xl border border-white/10 flex justify-between items-center">
-<div class="grid grid-cols-3 gap-6 font-data-mono text-[10px]">
-<div><span class="opacity-50 mr-1">X:</span><span id="coord-x">+0.004</span></div>
-<div><span class="opacity-50 mr-1">Y:</span><span id="coord-y">-0.012</span></div>
-<div><span class="opacity-50 mr-1">Z:</span><span class="text-emerald-400" id="coord-z">+0.001</span></div>
-</div>
-<div class="flex items-center gap-2">
-<span class="text-[8px] text-on-surface-variant uppercase">Opacity</span>
-<input class="w-12 accent-primary" max="100" min="0" oninput="updateOpacity(this.value)" type="range" value="90"/>
-</div>
-</div>
-<div class="flex gap-3 h-16">
-<button class="flex-1 bg-surface-container-high/80 backdrop-blur-md rounded-2xl font-bold uppercase text-xs active:bg-primary active:text-white transition-all border border-white/10 shadow-lg" id="snap-cad-btn">Snap CAD</button>
-<button class="flex-[1.5] bg-primary text-white rounded-2xl font-bold uppercase text-sm active:scale-95 transition-all shadow-xl shadow-primary/20 border border-primary/50 flex items-center justify-center gap-2" id="confirm-point-btn">
-<span class="material-symbols-outlined">radio_button_checked</span> Confirm Point
-                </button>
-</div>
-</div>
-</div>
-<!-- Layer Management Drawer -->
-<div class="fixed inset-y-0 right-0 w-64 glass-panel z-50 border-l border-white/10 transition-drawer drawer-closed" id="layer-drawer">
-<div class="p-6 h-full flex flex-col">
-<div class="flex justify-between items-center mb-8">
-<h3 class="text-sm font-headline-lg uppercase tracking-tight text-primary">Gestión de Capas</h3>
-<button class="material-symbols-outlined text-on-surface-variant" onclick="toggleDrawer()">close</button>
-</div>
-<div class="space-y-4 flex-grow">
-<label class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-white/5 cursor-pointer">
-<span class="text-xs font-medium">Vigas (Activo)</span>
-<input checked="" class="rounded text-primary focus:ring-primary h-4 w-4" onchange="toggleLayer('layer-vigas', this.checked)" type="checkbox"/>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-white/5 cursor-pointer">
-<span class="text-xs font-medium">Columnas</span>
-<input class="rounded text-primary focus:ring-primary h-4 w-4" onchange="toggleLayer('layer-columnas', this.checked)" type="checkbox"/>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-white/5 cursor-pointer">
-<span class="text-xs font-medium opacity-50">Instalaciones</span>
-<input class="rounded text-primary focus:ring-primary h-4 w-4" disabled="" type="checkbox"/>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-white/5 cursor-pointer">
-<span class="text-xs font-medium opacity-50">Cimientos</span>
-<input class="rounded text-primary focus:ring-primary h-4 w-4" disabled="" type="checkbox"/>
-</label>
-</div>
-<div class="pt-6 border-t border-white/10">
-<div class="text-[9px] text-on-surface-variant uppercase mb-2">Contraste de Visualización</div>
-<div class="flex gap-2">
-<button class="flex-1 bg-primary/20 border border-primary text-primary text-[8px] py-2 rounded uppercase font-bold" onclick="updateContrast('high')">Alto Contraste</button>
-<button class="flex-1 bg-white/5 border border-white/10 text-on-surface text-[8px] py-2 rounded uppercase font-bold" onclick="updateContrast('std')">Estándar</button>
-</div>
-</div>
-</div>
-</div>
-</main>
-<!-- View: System -->
-<main class="view-section pt-16 pb-32 px-container-margin max-w-4xl mx-auto space-y-6" id="view-system">
-<header class="mb-4">
-<h2 class="text-xl font-headline-lg uppercase tracking-tight">Sistema y Cierre</h2>
-<p class="text-xs text-on-surface-variant">Configuración final y entrega de proyecto.</p>
-</header>
-<section class="glass-panel p-4 rounded-xl border border-emerald-500/20 flex items-center gap-4">
-<div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center border border-emerald-500/40">
-<span class="material-symbols-outlined text-2xl">verified</span>
-</div>
-<div class="flex-grow">
-<h3 class="text-md font-headline-lg">Validado por LiDAR</h3>
-<p class="text-[10px] text-on-surface-variant">Precisión verificada en Reconquista, SF.</p>
-</div>
-<div class="bg-surface-container px-2 py-1 font-data-mono text-primary rounded border border-white/10 text-[10px]">SF-REC-24X</div>
-</section>
-<div class="grid grid-cols-2 gap-4">
-<div class="glass-panel p-3 rounded-xl border border-white/5">
-<span class="text-[9px] text-on-surface-variant uppercase font-bold">Error RMS</span>
-<div class="text-xl font-data-mono mt-1">0.008m</div>
-</div>
-<div class="glass-panel p-3 rounded-xl border border-white/5">
-<span class="text-[9px] text-on-surface-variant uppercase font-bold">Sesión</span>
-<div class="text-xl font-data-mono mt-1">02:15:10</div>
-</div>
-</div>
-<button class="w-full bg-primary text-white py-4 rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-2 uppercase">
-<span class="material-symbols-outlined">archive</span> Generar Reporte Final
-    </button>
-</main>
-<!-- Bottom Navigation Bar -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-white/10 flex justify-around items-center p-3 pb-6">
-<button class="nav-btn flex flex-col items-center gap-1 text-primary" id="nav-view-control" onclick="switchView('view-control')">
-<span class="material-symbols-outlined">map</span>
-<span class="text-[9px] font-bold uppercase">Control</span>
-</button>
-<button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-verify" onclick="switchView('view-verify')">
-<span class="material-symbols-outlined">fact_check</span>
-<span class="text-[9px] font-bold uppercase">Verify</span>
-</button>
-<button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-ar" onclick="switchView('view-ar')">
-<span class="material-symbols-outlined">view_in_ar</span>
-<span class="text-[9px] font-bold uppercase">HUD AR</span>
-</button>
-<button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-system" onclick="switchView('view-system')">
-<span class="material-symbols-outlined">settings_input_component</span>
-<span class="text-[9px] font-bold uppercase">System</span>
-</button>
-</nav>
-<!-- SPA logic -->
-<script>
-    const video = document.getElementById('ar-camera-feed');
-    const drawer = document.getElementById('layer-drawer');
-
-    function toggleDrawer() {
-        drawer.classList.toggle('drawer-closed');
-        drawer.classList.toggle('drawer-open');
+<style>
+        body { font-family: "Inter", sans-serif; background-color: #1c110b; color: #f6ded3; margin: 0; overflow: hidden; }
+        .ar-viewport { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        .cad-overlay { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0.8; }
+        .hud-glass { background: rgba(28, 17, 11, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(88, 66, 55, 0.5); }
+        .drawer-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .layer-active { color: #f97316; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
     }
-
-    function toggleLayer(layerId, isVisible) {
-        const layer = document.getElementById(layerId);
-        if (isVisible) {
-            layer.classList.remove('hidden');
+  </style>
+  </head>
+<body>
+<div class="ar-viewport">
+<!-- Camera Feed (Placeholder) -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A first-person perspective view of a construction site during the golden hour. In the foreground, concrete columns and reinforcement bars are visible. The lighting is warm and cinematic, reflecting off industrial equipment. The scene is crisp and high-resolution, captured with a professional wide-angle lens to emphasize depth and scale for an augmented reality application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtRsBA6SPq443tTARDrsBxpjJZpkRoBXpp2gZbRYbuQYFtBbh_Hs0cZGrq7IVlK3_Jq7_zPyPUSB9CI-6VlY6skSoJ1pI8syKEq3SpIChucIPnL7ryINMNuqDLQnhFmEIcp_PG0nvFdhj29qZFGPIBwmcU59271SPnpNVu6ht367ScqrhI6NFB7JWlJ9BHgScj6eP2trwjP27qPThjB4-fopmmP-emyLmDABylJZVzKJNOp7uB6o10"/>
+</div>
+<!-- WebGL CAD Overlay Animation -->
+<div class="cad-overlay z-10 flex items-center justify-center">
+<!-- Using a shader to represent the complex CAD wireframe overlay -->
+<webgl-shader class="w-full h-full" src="{{DATA:ANIMATION:ANIMATION_1}}"></webgl-shader>
+</div>
+<!-- HUD: Top System Metrics -->
+<div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 w-[90%] max-w-lg">
+<div class="hud-glass rounded-xl px-4 py-2 flex items-center justify-between shadow-2xl">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-sm">precision_manufacturing</span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-outline">Stability</span>
+<span class="text-xs font-data-mono text-white">98%</span>
+</div>
+<div class="w-px h-4 bg-outline-variant"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-sm">sensors</span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-outline">LiDAR</span>
+<span class="text-xs font-data-mono text-white">Active</span>
+</div>
+<div class="w-px h-4 bg-outline-variant"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-sm">location_on</span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-outline">GPS</span>
+<span class="text-xs font-data-mono text-white">±0.2m</span>
+</div>
+</div>
+<div class="flex items-center gap-2 ml-4 pl-4 border-l border-outline-variant">
+<span class="material-symbols-outlined text-white text-lg">settings</span>
+</div>
+</div>
+</div>
+<!-- Side Button: Layer Management Trigger -->
+<button class="absolute left-4 top-1/2 -translate-y-1/2 z-30 hud-glass size-12 rounded-full flex items-center justify-center text-white active:scale-95 transition-transform" onclick="toggleDrawer()">
+<span class="material-symbols-outlined" id="layer-icon">layers</span>
+</button>
+<!-- Layer Management Drawer -->
+<div class="absolute left-0 top-0 h-full w-72 hud-glass z-40 drawer-transition -translate-x-full flex flex-col p-6" id="layer-drawer">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-lg text-lg text-white">Gestión de Capas</h2>
+<button class="text-outline hover:text-white" onclick="toggleDrawer()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="space-y-4">
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline-variant mb-2">Visibilidad CAD</p>
+<!-- Layer Item -->
+<label class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-transparent hover:border-outline-variant cursor-pointer transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">architecture</span>
+<span class="text-body-lg text-white">Vigas</span>
+</div>
+<input checked="" class="rounded border-outline-variant bg-surface text-primary-container focus:ring-primary-container" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-transparent hover:border-outline-variant cursor-pointer transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">view_column</span>
+<span class="text-body-lg text-white">Columnas</span>
+</div>
+<input checked="" class="rounded border-outline-variant bg-surface text-primary-container focus:ring-primary-container" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-transparent hover:border-outline-variant cursor-pointer transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">plumbing</span>
+<span class="text-body-lg text-white">Instalaciones</span>
+</div>
+<input class="rounded border-outline-variant bg-surface text-primary-container focus:ring-primary-container" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-transparent hover:border-outline-variant cursor-pointer transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">foundation</span>
+<span class="text-body-lg text-white">Cimientos</span>
+</div>
+<input class="rounded border-outline-variant bg-surface text-primary-container focus:ring-primary-container" type="checkbox"/>
+</label>
+</div>
+<div class="mt-auto pt-6 border-t border-outline-variant">
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Opacidad del Plano
+<input class="w-full accent-primary-container bg-surface-container-highest rounded-lg appearance-none h-1.5" max="100" min="0" oninput="updateOpacity(this.value)" type="range" value="80"/>
+<div class="flex justify-between text-[10px] text-outline font-data-mono">
+<span>0%</span>
+<span>100%</span>
+</div>
+</label></div>
+</div>
+</div>
+<!-- Crosshair Target -->
+<div class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
+<div class="relative size-16">
+<div class="absolute inset-0 border-2 border-primary-container/30 rounded-full animate-pulse"></div>
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-3 bg-primary-container"></div>
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[2px] h-3 bg-primary-container"></div>
+<div class="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-3 bg-primary-container"></div>
+<div class="absolute right-0 top-1/2 -translate-y-1/2 h-[2px] w-3 bg-primary-container"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-1 bg-primary-container rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Ergonomic Action Buttons (Thumb Area) -->
+<div class="absolute bottom-10 left-0 w-full px-8 z-30 flex justify-between items-end gap-6">
+<!-- Snap to CAD Button -->
+<button class="flex-1 max-w-[180px] h-16 hud-glass rounded-2xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform border-b-4 border-primary-container/40">
+<span class="material-symbols-outlined text-primary-container">grid_guides</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-white">Snap to CAD</span>
+</button>
+<!-- Main Trigger (Record/Capture) -->
+<div class="relative flex items-center justify-center">
+<div class="absolute size-24 rounded-full border border-primary-container/20 animate-ping"></div>
+<button class="size-20 bg-primary-container text-on-primary-fixed rounded-full shadow-[0_0_40px_rgba(249,115,22,0.4)] flex items-center justify-center active:scale-90 transition-all">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
+</button>
+</div>
+<!-- Confirm Point Button -->
+<button class="flex-1 max-w-[180px] h-16 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-white">check_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-white">Confirm Point</span>
+</button>
+</div>
+<!-- Mini Bottom Info Bar -->
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-30">
+<p class="text-[9px] font-data-mono text-outline uppercase tracking-[0.2em] whitespace-nowrap">Coord: 19.4326° N, 99.1332° W | Alt: 2,240m</p>
+</div>
+</div>
+<script>
+    function toggleDrawer() {
+        const drawer = document.getElementById('layer-drawer');
+        const icon = document.getElementById('layer-icon');
+        const isOpen = !drawer.classList.contains('-translate-x-full');
+        
+        if (isOpen) {
+            drawer.classList.add('-translate-x-full');
+            icon.textContent = 'layers';
         } else {
-            layer.classList.add('hidden');
+            drawer.classList.remove('-translate-x-full');
+            icon.textContent = 'arrow_back';
         }
     }
 
     function updateOpacity(val) {
-        document.getElementById('ar-vector-overlay').style.opacity = val / 100;
+        const overlay = document.querySelector('.cad-overlay');
+        overlay.style.opacity = val / 100;
     }
 
-    function updateContrast(type) {
-        const svg = document.getElementById('ar-vector-overlay');
-        if (type === 'high') {
-            svg.setAttribute('stroke-width', '5');
-            svg.style.filter = 'drop-shadow(0 0 2px rgba(0,0,0,0.8))';
-        } else {
-            svg.setAttribute('stroke-width', '3');
-            svg.style.filter = 'none';
-        }
-    }
-
-    async function initCamera() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "environment" },
-                audio: false 
-            });
-            video.srcObject = stream;
-        } catch (err) {
-            console.error("Error accessing camera: ", err);
-            video.style.background = "#0f172a"; 
-        }
-    }
-
-    function switchView(viewId) {
-        document.querySelectorAll('.view-section').forEach(view => {
-            view.classList.remove('active');
+    // Micro-interaction: haptic feedback simulation
+    document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(10);
+            }
         });
-        document.getElementById(viewId).classList.add('active');
-        
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.add('opacity-60', 'text-on-surface-variant');
-            btn.classList.remove('text-primary');
-        });
-        const activeBtn = document.getElementById('nav-' + viewId);
-        if(activeBtn) {
-            activeBtn.classList.remove('opacity-60', 'text-on-surface-variant');
-            activeBtn.classList.add('text-primary');
-        }
-
-        if(viewId === 'view-ar') {
-            initCamera();
-        } else if (video.srcObject) {
-            video.srcObject.getTracks().forEach(track => track.stop());
-            drawer.classList.add('drawer-closed');
-            drawer.classList.remove('drawer-open');
-        }
-
-        window.scrollTo(0,0);
-    }
-
-    // Coordinate & Movement Simulation
-    const coords = { x: 0.004, y: -0.012, z: 0.001 };
-    const coordEls = {
-        x: document.getElementById('coord-x'),
-        y: document.getElementById('coord-y'),
-        z: document.getElementById('coord-z'),
-        stability: document.getElementById('gyro-stability')
-    };
-
-    let driftSpeed = 0.0001;
-    
-    setInterval(() => {
-        const activeAr = document.getElementById('view-ar').classList.contains('active');
-        if(activeAr) {
-            coords.x += (Math.random() - 0.5) * 0.0008 + driftSpeed;
-            coords.y += (Math.random() - 0.5) * 0.0008 - driftSpeed;
-            coords.z += (Math.random() - 0.5) * 0.0003;
-            
-            coordEls.x.innerText = (coords.x >= 0 ? '+' : '') + coords.x.toFixed(4);
-            coordEls.y.innerText = (coords.y >= 0 ? '+' : '') + coords.y.toFixed(4);
-            coordEls.z.innerText = (coords.z >= 0 ? '+' : '') + coords.z.toFixed(4);
-            
-            const stabilityVal = (99.5 + Math.random() * 0.4).toFixed(1);
-            coordEls.stability.innerText = stabilityVal + '%';
-            
-            const svg = document.getElementById('ar-vector-overlay');
-            const tiltX = Math.sin(Date.now() / 1000) * 1.5;
-            const tiltY = Math.cos(Date.now() / 1200) * 1.5;
-            svg.style.transform = `translate(${tiltX}px, ${tiltY}px)`;
-        }
-    }, 100);
-
-    // Interaction Events
-    document.getElementById('confirm-point-btn').addEventListener('click', function() {
-        const originalHtml = this.innerHTML;
-        this.classList.remove('bg-primary');
-        this.classList.add('bg-emerald-500', 'border-emerald-400');
-        this.innerHTML = '<span class="material-symbols-outlined">check</span> CAPTURED';
-        
-        const logEntry = document.createElement('div');
-        logEntry.className = 'flex gap-2 animate-pulse';
-        logEntry.innerHTML = `<span>[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]</span> <span class="text-emerald-400">Captured X:${coords.x.toFixed(3)} Y:${coords.y.toFixed(3)}</span>`;
-        document.getElementById('system-log-content').prepend(logEntry);
-
-        setTimeout(() => {
-            this.classList.add('bg-primary');
-            this.classList.remove('bg-emerald-500', 'border-emerald-400');
-            this.innerHTML = originalHtml;
-        }, 1200);
     });
-
-    document.getElementById('snap-cad-btn').addEventListener('click', function() {
-        this.classList.add('bg-primary', 'text-white');
-        const svg = document.getElementById('ar-vector-overlay');
-        svg.classList.add('scale-[1.02]');
-        setTimeout(() => {
-            this.classList.remove('bg-primary', 'text-white');
-            svg.classList.remove('scale-[1.02]');
-        }, 200);
-    });
-
-    // Upload Simulation
-    (function() {
-        const container = document.getElementById('upload-flow-container');
-        const input = document.getElementById('cad-upload-input');
-        const initial = document.getElementById('upload-state-initial');
-        const progress = document.getElementById('upload-state-progress');
-        const success = document.getElementById('upload-state-success');
-        const bar = document.getElementById('upload-progress-bar');
-        const status = document.getElementById('upload-status-text');
-
-        container.addEventListener('click', () => {
-            if(!initial.classList.contains('hidden')) input.click();
-        });
-        
-        input.addEventListener('change', () => {
-          if (input.files.length > 0) {
-            initial.classList.add('hidden');
-            progress.classList.remove('hidden');
-            let p = 0;
-            const interval = setInterval(() => {
-                p += 5;
-                bar.style.width = p + '%';
-                if(p < 40) status.innerText = 'Analizando Layers...';
-                else if(p < 80) status.innerText = 'Indexando DWG...';
-                else status.innerText = 'Completando...';
-                
-                if (p >= 100) {
-                    clearInterval(interval);
-                    progress.classList.add('hidden');
-                    success.classList.remove('hidden');
-                }
-            }, 80);
-          }
-        });
-    })();
 </script>
 </body></html>
