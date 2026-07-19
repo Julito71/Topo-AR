@@ -3,455 +3,458 @@
 <html class="dark" lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>TopoAR Pro - AR Stakeout HUD</title>
+<title>TopoAR Pro - Engineering HUD</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97316",
+                        "surface": "#1c110b",
+                        "on-surface": "#f6ded3",
+                        "background": "#0c0805",
+                        "error": "#ffb4ab",
+                        "tertiary": "#93ccff",
+                    },
+                    fontFamily: {
+                        "geist": ["Geist", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    }
+                }
+            }
+        }
+    </script>
 <style>
         :root {
             --primary: #f97316;
-            --surface: #1c110b;
+            --background: #0c0805;
         }
         body {
-            background-color: black;
+            background-color: var(--background);
             margin: 0;
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
+            height: 100vh;
+            width: 100vw;
+            color: #f6ded3;
+            font-family: 'Inter', sans-serif;
         }
+        
         .glass-panel {
-            background: rgba(28, 17, 11, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(28, 17, 11, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .led-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(249, 115, 22, 0.3);
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 5;
-            animation: scan 4s linear infinite;
-        }
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
+        
         #ar-camera-feed {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: cover;
             position: fixed;
             inset: 0;
             z-index: 0;
+            filter: brightness(0.6) contrast(1.2);
         }
-        .view-section { display: none; }
+
+        .view-section { 
+            display: none; 
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            inset: 0;
+            overflow-y: auto;
+            padding-bottom: 120px;
+        }
         .view-section.active { display: block; }
-        .transition-drawer { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .drawer-closed { transform: translateX(100%); }
-        .drawer-open { transform: translateX(0); }
         
-        .high-vis-text {
-            text-shadow: 0 1px 2px rgba(0,0,0,0.9);
-        }
-        
-        /* iPhone 16 Pro Safe Areas */
         .safe-top { padding-top: env(safe-area-inset-top); }
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-        
-        /* CAD Pulse Effect */
-        .cad-lock-pulse {
-            animation: lock-pulse 0.4s ease-out;
+
+        .scanline {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(249, 115, 22, 0.03) 50%);
+            background-size: 100% 4px;
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
         }
-        @keyframes lock-pulse {
-            0% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.05); filter: brightness(2); }
-            100% { transform: scale(1); filter: brightness(1); }
+
+        .tab-active { color: #f97316 !important; }
+        .tab-active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.1);
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #f97316;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+            border: 2px solid #fff;
+        }
+
+        .tech-grid {
+            background-image: 
+                linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        @keyframes scanning {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(400%); }
+        }
+        .scan-bar {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f97316, transparent);
+            box-shadow: 0 0 15px #f97316;
+            animation: scanning 3s linear infinite;
         }
     </style>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                "primary": "#f97316",
-                "on-primary": "#ffffff",
-                "primary-container": "#f97316",
-                "on-primary-container": "#ffffff",
-                "surface": "#1c110b",
-                "surface-dim": "#1c110b",
-                "surface-bright": "#45362f",
-                "surface-container": "#291d16",
-                "surface-container-high": "#352720",
-                "on-surface": "#f6ded3",
-                "on-surface-variant": "#e0c0b1",
-                "outline": "#a78b7d",
-                "error": "#ffb4ab",
-                "on-error": "#690005"
-              },
-              "borderRadius": {
-                "DEFAULT": "0.5rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem"
-              },
-              "spacing": {
-                "gutter": "16px",
-                "container-margin": "24px"
-              },
-              "fontFamily": {
-                "headline-lg": ["Geist"],
-                "body-lg": ["Inter"],
-                "data-mono": ["JetBrains Mono"]
-              }
-            }
-          }
-        }
-    </script>
 </head>
-<body class="text-on-surface font-body-lg min-h-screen selection:bg-primary/30">
-<!-- Global Camera Feed -->
-<video autoplay="" id="ar-camera-feed" muted="" playsinline=""></video>
-<div class="scanline z-10 pointer-events-none"></div>
-<!-- Persistent Header -->
-<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-white/10 px-4 flex justify-between items-center h-14 safe-top">
+<body class="antialiased select-none">
+<div class="scanline"></div>
+<!-- Global Technical HUD Header -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-start px-6 pt-4 safe-top pointer-events-none">
+<div class="flex flex-col pointer-events-auto">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">precision_manufacturing</span>
-<h1 class="font-data-mono text-sm font-bold text-primary tracking-tighter uppercase">TOPO_OS_v2.5</h1>
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#f97316] animate-pulse"></div>
+<h1 class="font-mono text-[10px] font-bold text-primary tracking-[0.2em] uppercase">TOPO_CORE_v3.0.4</h1>
 </div>
-<div class="flex items-center gap-3">
-<div class="flex items-center gap-1.5 px-2 py-0.5 bg-black/40 rounded-full border border-white/10">
-<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 led-pulse"></span>
-<span class="font-data-mono text-[10px] text-emerald-400 uppercase">RTK: 0.002m</span>
+<span class="text-[9px] text-white/40 font-mono mt-0.5" id="system-status">SYS_STABLE | PING: 8ms | SAT: 14</span>
 </div>
-<span class="material-symbols-outlined text-primary text-lg">signal_cellular_alt</span>
+<div class="flex flex-col items-end pointer-events-auto">
+<div class="flex items-center gap-2 px-3 py-1.5 glass-panel rounded border border-white/10">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span class="font-mono text-[9px] text-emerald-400 font-bold uppercase tracking-wider">RTK FIX: 0.003m</span>
+</div>
 </div>
 </header>
-<!-- View: AR HUD (Primary View) -->
-<main class="view-section active fixed inset-0 z-20 pt-14" id="view-ar">
-<!-- CAD Vector Overlay (plano 1.dwg simulation) -->
-<svg class="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-80" id="ar-vector-overlay" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
-<!-- Ejes (Axes) Layer -->
-<g id="layer-ejes" stroke="rgba(255, 255, 255, 0.4)" stroke-dasharray="10,5" stroke-width="1">
+<!-- View: Cargar -->
+<section class="view-section bg-background tech-grid z-20 px-6 pt-24" id="view-cargar">
+<div class="max-w-md mx-auto space-y-10">
+<div class="space-y-1">
+<h2 class="text-4xl font-geist font-black text-white uppercase tracking-tighter">Cargar</h2>
+<div class="h-1 w-12 bg-primary"></div>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-[10px] font-mono font-bold text-primary/60 uppercase tracking-[0.2em]">Identificador Proyecto</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-4 text-white font-mono text-sm focus:border-primary outline-none transition-colors" id="project-name" placeholder="PROJECT_ID_NULL" type="text"/>
+</div>
+<div class="relative group cursor-pointer" id="drop-zone">
+<div class="absolute inset-0 bg-primary/5 rounded-2xl border-2 border-dashed border-white/10 group-hover:border-primary/40 transition-all"></div>
+<div class="relative p-12 flex flex-col items-center justify-center gap-4 text-center">
+<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl text-primary">upload_file</span>
+</div>
+<div class="space-y-1">
+<p class="text-sm font-bold text-white uppercase tracking-tight">Importar Vectoriales</p>
+<p class="text-[10px] text-white/40 font-mono">SUPPORTS: .DWG .DXF .XML</p>
+</div>
+</div>
+<input accept=".dwg,.dxf,.xml" class="hidden" id="file-input" type="file"/>
+</div>
+<div class="space-y-4 pt-4">
+<h3 class="text-[10px] font-mono font-bold text-white/40 uppercase tracking-[0.2em]">Archivos Recientes</h3>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-4 glass-panel rounded-xl border-l-2 border-l-primary/40">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-white">ESTRUCTURA_B3_FINAL.DWG</span>
+<span class="text-[9px] font-mono text-white/30">24 OCT 2023 | 12.4 MB</span>
+</div>
+<span class="material-symbols-outlined text-white/20 text-lg">history</span>
+</div>
+<div class="flex items-center justify-between p-4 glass-panel rounded-xl opacity-60">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-white">REPLANTEO_CIMENTACION.DXF</span>
+<span class="text-[9px] font-mono text-white/30">18 OCT 2023 | 8.1 MB</span>
+</div>
+<span class="material-symbols-outlined text-white/20 text-lg">history</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary py-5 rounded-xl font-geist font-black text-black uppercase tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-3" onclick="processFile()">
+<span class="material-symbols-outlined font-black">sync_alt</span>
+                Procesar Buffer
+            </button>
+</div>
+</section>
+<!-- View: Capas -->
+<section class="view-section bg-background tech-grid z-20 px-6 pt-24" id="view-capas">
+<div class="max-w-md mx-auto space-y-8">
+<div class="flex justify-between items-end border-b border-white/10 pb-4">
+<div class="space-y-1">
+<h2 class="text-4xl font-geist font-black text-white uppercase tracking-tighter">Capas</h2>
+<p class="text-primary text-[10px] font-mono font-bold uppercase tracking-[0.1em]" id="layer-count">ARCH: NINGUNO DETECTADO</p>
+</div>
+</div>
+<div class="py-20 flex flex-col items-center justify-center text-center space-y-6" id="layers-empty-state">
+<div class="relative w-24 h-24">
+<div class="absolute inset-0 border-2 border-white/5 rounded-full"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-5xl text-white/10">layers_clear</span>
+</div>
+<div class="scan-bar absolute left-0 right-0 top-0"></div>
+</div>
+<div class="space-y-2">
+<p class="text-sm font-bold text-white/30 uppercase tracking-widest">Esperando Fuente de Datos</p>
+<p class="text-[10px] text-white/20 font-mono px-12">DEBE CARGAR UN ARCHIVO DE INGENIERÍA PARA VISUALIZAR LA JERARQUÍA DE CAPAS</p>
+</div>
+</div>
+<div class="hidden space-y-3" id="layers-container">
+<div class="grid grid-cols-1 gap-2" id="layers-list">
+<!-- Loaded via JS -->
+</div>
+<div class="glass-panel p-5 rounded-2xl space-y-4 border-primary/10 mt-6">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">visibility</span>
+<span class="text-[10px] text-white/60 font-mono font-bold uppercase">Opacidad CAD</span>
+</div>
+<span class="text-[10px] font-mono text-primary font-bold" id="opacity-val">80%</span>
+</div>
+<input class="w-full" max="100" min="0" oninput="updateCADOpacity(this.value)" type="range" value="80"/>
+</div>
+</div>
+</div>
+</section>
+<!-- View: Replanteo (HUD) -->
+<main class="view-section active fixed inset-0 z-10 overflow-hidden" id="view-replanteo">
+<video autoplay="" id="ar-camera-feed" muted="" playsinline=""></video>
+<!-- Technical Grid Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-20 tech-grid"></div>
+<!-- CAD Vector Overlay (Simulated) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-80" id="cad-overlay" preserveaspectratio="xMidYMid slice" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
+<g id="layer-grid" stroke="rgba(255, 255, 255, 0.15)" stroke-dasharray="4,4" stroke-width="0.5">
 <line x1="0" x2="400" y1="200" y2="200"></line>
 <line x1="0" x2="400" y1="400" y2="400"></line>
 <line x1="0" x2="400" y1="600" y2="600"></line>
-<line x1="100" x2="100" y1="0" y2="800"></line>
-<line x1="300" x2="300" y1="0" y2="800"></line>
 </g>
-<!-- Vigas (Beams) Layer -->
-<g fill="none" id="layer-vigas" stroke="#f97316" stroke-width="3">
-<path d="M 100 200 L 300 200 L 300 600 L 100 600 Z"></path>
-<path d="M 100 400 L 300 400"></path>
-<!-- Interior diagonal for framing -->
-<path d="M 100 200 L 300 400" opacity="0.3" stroke-dasharray="4 4"></path>
+<g class="transition-opacity" fill="none" id="vector-beams" stroke="#f97316" stroke-width="1.5">
+<path d="M 50 250 L 350 250 L 350 550 L 50 550 Z"></path>
+<path d="M 50 400 L 350 400"></path>
 </g>
-<!-- Columnas (Columns) Layer -->
-<g fill="rgba(249, 115, 22, 0.2)" id="layer-columnas" stroke="#f97316" stroke-width="3">
-<circle cx="100" cy="200" r="10"></circle>
-<circle cx="300" cy="200" r="10"></circle>
-<circle cx="100" cy="400" r="10"></circle>
-<circle cx="300" cy="400" r="10"></circle>
-<circle cx="100" cy="600" r="10"></circle>
-<circle cx="300" cy="600" r="10"></circle>
+<g class="transition-opacity" fill="rgba(249, 115, 22, 0.2)" id="vector-columns" stroke="#f97316" stroke-width="2">
+<circle cx="50" cy="250" r="6"></circle>
+<circle cx="350" cy="250" r="6"></circle>
+<circle cx="50" cy="400" r="6"></circle>
+<circle cx="350" cy="400" r="6"></circle>
+<circle cx="50" cy="550" r="6"></circle>
+<circle cx="350" cy="550" r="6"></circle>
 </g>
 </svg>
-<!-- HUD Layout -->
-<div class="absolute inset-0 p-4 flex flex-col pointer-events-none pb-28">
-<!-- Top Metrics -->
-<div class="flex justify-between items-start pointer-events-auto">
-<div class="space-y-3">
-<button class="glass-panel p-4 rounded-xl flex items-center gap-3 border-2 border-primary/50 text-primary shadow-2xl active:scale-95 transition-all" onclick="toggleDrawer()">
-<span class="material-symbols-outlined text-2xl">layers</span>
-<span class="text-xs font-bold uppercase tracking-widest">CAPAS</span>
-</button>
-<div class="relative">
-<input accept=".dwg,.dxf" class="hidden" id="cad-upload-input" type="file"/>
-<button class="glass-panel p-4 rounded-xl flex items-center gap-3 border-2 border-white/30 text-white shadow-xl active:scale-95 transition-all" onclick="document.getElementById('cad-upload-input').click()">
-<span class="material-symbols-outlined text-2xl">upload_file</span>
-<span class="text-xs font-bold uppercase tracking-widest">LOAD CAD</span>
-</button>
-<!-- Upload Status -->
-<div class="hidden absolute top-0 left-full ml-2 w-32 glass-panel p-2 rounded-lg" id="upload-status-hud">
-<div class="h-1 bg-surface-container rounded-full overflow-hidden">
-<div class="h-full bg-primary" id="upload-progress-bar" style="width: 0%"></div>
+<!-- Precision HUD Elements -->
+<div class="absolute top-28 left-6 right-6 flex justify-between pointer-events-none">
+<div class="glass-panel px-4 py-2 rounded border-l-4 border-l-primary/60 flex flex-col">
+<span class="text-[8px] text-white/40 uppercase font-bold tracking-widest">Estabilidad</span>
+<span class="text-sm font-mono text-primary font-black" id="stability-val">99.8%</span>
 </div>
-<p class="text-[8px] mt-1 text-primary font-data-mono uppercase text-center" id="upload-text">Processing</p>
-</div>
-</div>
-</div>
-<!-- Orientation Status -->
-<div class="glass-panel px-4 py-3 rounded-xl flex gap-6 border-2 border-white/20 items-center shadow-2xl">
-<div class="flex flex-col">
-<span class="text-[8px] text-on-surface-variant font-bold uppercase mb-1">STABILITY</span>
-<span class="text-sm font-data-mono text-primary font-bold" id="gyro-stability">99.9%</span>
-</div>
-<div class="w-px h-6 bg-white/20"></div>
-<div class="flex flex-col">
-<span class="text-[8px] text-on-surface-variant font-bold uppercase mb-1">TARGET</span>
-<span class="text-sm font-data-mono text-emerald-400 font-bold">PLANO_1:VIGA_02</span>
-</div>
+<div class="glass-panel px-4 py-2 rounded border-r-4 border-r-tertiary/60 flex flex-col items-end">
+<span class="text-[8px] text-white/40 uppercase font-bold tracking-widest">Target ID</span>
+<span class="text-sm font-mono text-tertiary font-black">PT_CORE_V2</span>
 </div>
 </div>
 <!-- Central Reticle -->
-<div class="flex-grow flex items-center justify-center">
-<div class="relative w-56 h-56 flex items-center justify-center">
-<div class="absolute inset-0 border-2 border-primary/30 rounded-full animate-pulse"></div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="relative w-64 h-64">
+<!-- Compass Circles -->
+<div class="absolute inset-0 border border-white/5 rounded-full scale-100"></div>
+<div class="absolute inset-0 border border-white/10 rounded-full scale-75"></div>
 <!-- Crosshairs -->
-<div class="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-primary rounded-tl-sm"></div>
-<div class="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-primary rounded-tr-sm"></div>
-<div class="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-primary rounded-bl-sm"></div>
-<div class="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-primary rounded-br-sm"></div>
-<!-- Center point -->
-<div class="w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_20px_#f97316] ring-4 ring-primary/20"></div>
-<div class="absolute -bottom-12 bg-black/80 px-4 py-1.5 rounded-lg text-primary font-data-mono text-xs font-bold border-2 border-primary/40 backdrop-blur-md">
-                    RANGE: <span id="lidar-range">14.302m</span>
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/60"></div>
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/60"></div>
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-[1px] bg-primary/60"></div>
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-[1px] bg-primary/60"></div>
+<!-- Target Lock -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<div class="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_15px_2px_#f97316]"></div>
+</div>
+<div class="absolute -bottom-14 left-1/2 -translate-x-1/2 glass-panel px-4 py-1.5 rounded-full border border-primary/20">
+<span class="text-[10px] font-mono text-primary font-bold tracking-wider" id="lidar-dist">RANGE: 12.045m</span>
 </div>
 </div>
 </div>
-<!-- Data Dashboard -->
-<div class="space-y-4 pointer-events-auto">
-<div class="glass-panel p-4 rounded-2xl border-2 border-white/20 shadow-2xl flex flex-col gap-4">
-<div class="grid grid-cols-3 gap-3">
-<div class="bg-black/60 p-3 rounded-xl border border-white/10">
-<span class="text-[8px] font-black text-on-surface-variant uppercase block mb-1">Latitude / X</span>
-<span class="text-xs font-data-mono font-bold text-white tracking-tighter" id="coord-x">+34.829119</span>
+<!-- Delta Readout Overlay -->
+<div class="absolute bottom-32 left-6 right-6">
+<div class="glass-panel rounded-2xl overflow-hidden border border-white/10">
+<div class="bg-white/5 px-4 py-1 border-b border-white/5">
+<span class="text-[8px] font-mono text-white/40 uppercase tracking-widest">Delta Coordinates (WGS84)</span>
 </div>
-<div class="bg-black/60 p-3 rounded-xl border border-white/10">
-<span class="text-[8px] font-black text-on-surface-variant uppercase block mb-1">Longitude / Y</span>
-<span class="text-xs font-data-mono font-bold text-white tracking-tighter" id="coord-y">-58.129347</span>
+<div class="p-4 grid grid-cols-3 gap-4">
+<div class="flex flex-col gap-0.5">
+<span class="text-[9px] text-primary/80 uppercase font-bold tracking-tight">Δ North (X)</span>
+<span class="text-lg font-mono text-white font-black" id="coord-x">+0.012</span>
 </div>
-<div class="bg-black/60 p-3 rounded-xl border border-white/10">
-<span class="text-[8px] font-black text-on-surface-variant uppercase block mb-1">Altitude / Z</span>
-<span class="text-xs font-data-mono font-bold text-emerald-400 tracking-tighter" id="coord-z">+12.446m</span>
+<div class="flex flex-col gap-0.5 border-x border-white/10 px-4">
+<span class="text-[9px] text-primary/80 uppercase font-bold tracking-tight">Δ East (Y)</span>
+<span class="text-lg font-mono text-white font-black" id="coord-y">-0.008</span>
 </div>
-</div>
-<div class="flex items-center gap-4 px-1">
-<span class="text-[10px] text-on-surface font-bold uppercase whitespace-nowrap">CAD Opacity</span>
-<input class="flex-grow h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" oninput="updateOpacity(this.value)" type="range" value="80"/>
-</div>
-</div>
-<!-- Primary Actions -->
-<div class="grid grid-cols-3 gap-4 h-24">
-<button class="col-span-1 glass-panel text-white rounded-2xl font-bold uppercase text-[10px] active:bg-white/20 transition-all border-2 border-white/30 shadow-xl flex flex-col items-center justify-center gap-2" id="snap-cad-btn">
-<span class="material-symbols-outlined text-2xl">center_focus_weak</span>
-                    Snap to CAD
-                </button>
-<button class="col-span-2 bg-primary text-white rounded-2xl font-black uppercase text-xl active:scale-95 transition-all shadow-[0_15px_35px_rgba(249,115,22,0.5)] border-2 border-white/30 flex items-center justify-center gap-4" id="confirm-point-btn">
-<span class="material-symbols-outlined text-4xl">radio_button_checked</span>
-                    Confirm Point
-                </button>
+<div class="flex flex-col gap-0.5 items-end">
+<span class="text-[9px] text-emerald-400 uppercase font-bold tracking-tight">Δ Elev (Z)</span>
+<span class="text-lg font-mono text-emerald-400 font-black" id="coord-z">+0.002m</span>
 </div>
 </div>
 </div>
-<!-- Layer Management Drawer -->
-<div class="fixed inset-y-0 right-0 w-80 glass-panel z-50 border-l-2 border-primary/30 transition-drawer drawer-closed shadow-[-20px_0_60px_rgba(0,0,0,0.9)] safe-top" id="layer-drawer">
-<div class="p-6 h-full flex flex-col">
-<div class="flex justify-between items-center mb-10">
-<h3 class="text-base font-headline-lg font-black uppercase tracking-widest text-primary">Map Layers</h3>
-<button class="material-symbols-outlined text-white p-2 bg-white/5 rounded-full" onclick="toggleDrawer()">close</button>
 </div>
-<div class="space-y-4 flex-grow">
-<label class="flex items-center justify-between p-5 bg-black/60 rounded-2xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary text-2xl">foundation</span>
-<span class="text-sm font-bold uppercase">Beams / Vigas</span>
+<!-- Confirm Action -->
+<div class="absolute bottom-6 left-6 right-6">
+<button class="w-full bg-primary h-24 rounded-2xl flex flex-col items-center justify-center gap-1 text-black shadow-[0_20px_40px_-12px_rgba(249,115,22,0.4)] active:scale-[0.98] transition-all" id="btn-confirm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-4xl font-black">gps_fixed</span>
+<span class="text-2xl font-geist font-black uppercase tracking-tighter">Confirm Point</span>
 </div>
-<input checked="" class="rounded-full text-primary focus:ring-primary h-7 w-7 border-2 border-white/20" onchange="toggleLayer('layer-vigas', this.checked)" type="checkbox"/>
-</label>
-<label class="flex items-center justify-between p-5 bg-black/60 rounded-2xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary text-2xl">column_line</span>
-<span class="text-sm font-bold uppercase">Columns / Col.</span>
-</div>
-<input checked="" class="rounded-full text-primary focus:ring-primary h-7 w-7 border-2 border-white/20" onchange="toggleLayer('layer-columnas', this.checked)" type="checkbox"/>
-</label>
-<label class="flex items-center justify-between p-5 bg-black/60 rounded-2xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-primary text-2xl">grid_4x4</span>
-<span class="text-sm font-bold uppercase">Axes / Ejes</span>
-</div>
-<input checked="" class="rounded-full text-primary focus:ring-primary h-7 w-7 border-2 border-white/20" onchange="toggleLayer('layer-ejes', this.checked)" type="checkbox"/>
-</label>
-</div>
-<div class="pt-8 border-t border-white/10 space-y-4 pb-12">
-<div class="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">HUD Rendering</div>
-<div class="grid grid-cols-2 gap-3">
-<button class="bg-primary text-white text-[11px] py-4 rounded-xl uppercase font-black border border-white/20 shadow-lg" onclick="updateContrast('high')">High Contrast</button>
-<button class="bg-white/10 text-white text-[11px] py-4 rounded-xl uppercase font-bold border border-white/10" onclick="updateContrast('std')">Stealth</button>
-</div>
-</div>
-</div>
+<span class="text-[10px] font-mono font-bold opacity-60 uppercase tracking-[0.3em]">REPLANTEO #104_B</span>
+</button>
 </div>
 </main>
-<!-- Secondary Views (Placeholders) -->
-<main class="view-section pt-24 px-6" id="view-control">
-<div class="glass-panel p-8 rounded-3xl border-2 border-white/10 text-center">
-<span class="material-symbols-outlined text-7xl text-primary mb-6">map</span>
-<h2 class="text-2xl font-headline-lg text-white font-bold mb-4 uppercase tracking-tighter">Site Control</h2>
-<p class="text-sm text-on-surface-variant mb-8">Manage site coordinates and local benchmarks.</p>
-<div class="space-y-3">
-<div class="p-4 bg-black/40 rounded-xl border border-white/5 text-left flex justify-between">
-<span class="font-bold text-xs uppercase">Active Job</span>
-<span class="font-data-mono text-primary text-xs font-bold">PLAN_A_SECTOR_4</span>
-</div>
-</div>
-</div>
-</main>
-<!-- Bottom Navigation -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-3xl border-t border-white/10 flex justify-around items-center h-24 pb-8 safe-bottom">
-<button class="nav-btn flex flex-col items-center gap-1.5 text-on-surface-variant opacity-60 flex-1" id="nav-view-control" onclick="switchView('view-control')">
-<span class="material-symbols-outlined text-2xl">map</span>
-<span class="text-[9px] font-bold uppercase tracking-widest">Control</span>
+<!-- Navigation -->
+<nav class="fixed bottom-0 w-full z-50 bg-background border-t border-white/10 px-10 h-20 safe-bottom flex justify-between items-center">
+<button class="flex flex-col items-center gap-1 text-white/30 transition-colors" id="nav-cargar" onclick="switchTab('view-cargar')">
+<span class="material-symbols-outlined text-2xl">file_upload</span>
+<span class="text-[9px] font-bold uppercase tracking-wider">Cargar</span>
 </button>
-<button class="nav-btn flex flex-col items-center gap-1.5 text-primary flex-1" id="nav-view-ar" onclick="switchView('view-ar')">
-<div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center -mt-10 border-4 border-surface shadow-2xl">
-<span class="material-symbols-outlined text-3xl text-white">view_in_ar</span>
+<button class="flex flex-col items-center gap-1 text-white/30 tab-active transition-colors" id="nav-replanteo" onclick="switchTab('view-replanteo')">
+<div class="relative">
+<div class="w-12 h-12 -mt-10 bg-primary rounded-xl rotate-45 flex items-center justify-center shadow-lg shadow-primary/20 border-2 border-background">
+<span class="material-symbols-outlined text-2xl text-black font-black -rotate-45">navigation</span>
 </div>
-<span class="text-[9px] font-black uppercase tracking-widest">HUD AR</span>
+</div>
+<span class="text-[9px] font-bold uppercase tracking-wider mt-1">Replanteo</span>
 </button>
-<button class="nav-btn flex flex-col items-center gap-1.5 text-on-surface-variant opacity-60 flex-1" id="nav-view-system" onclick="switchView('view-system')">
-<span class="material-symbols-outlined text-2xl">settings_input_component</span>
-<span class="text-[9px] font-bold uppercase tracking-widest">System</span>
+<button class="flex flex-col items-center gap-1 text-white/30 transition-colors" id="nav-capas" onclick="switchTab('view-capas')">
+<span class="material-symbols-outlined text-2xl">layers</span>
+<span class="text-[9px] font-bold uppercase tracking-wider">Capas</span>
 </button>
 </nav>
 <script>
-    const video = document.getElementById('ar-camera-feed');
-    const drawer = document.getElementById('layer-drawer');
-    const svgOverlay = document.getElementById('ar-vector-overlay');
+        // View Navigation
+        function switchTab(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
 
-    function toggleDrawer() {
-        drawer.classList.toggle('drawer-closed');
-        drawer.classList.toggle('drawer-open');
-    }
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
+            const tabId = viewId.replace('view-', 'nav-');
+            document.getElementById(tabId).classList.add('tab-active');
 
-    function toggleLayer(layerId, isVisible) {
-        const layer = document.getElementById(layerId);
-        if (isVisible) layer.classList.remove('hidden');
-        else layer.classList.add('hidden');
-    }
-
-    function updateOpacity(val) {
-        svgOverlay.style.opacity = val / 100;
-    }
-
-    function updateContrast(type) {
-        if (type === 'high') {
-            svgOverlay.setAttribute('stroke-width', '6');
-            svgOverlay.style.filter = 'drop-shadow(0 0 4px rgba(0,0,0,1)) brightness(1.5)';
-        } else {
-            svgOverlay.setAttribute('stroke-width', '3');
-            svgOverlay.style.filter = 'none';
-        }
-    }
-
-    async function initCamera() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "environment" },
-                audio: false 
-            });
-            video.srcObject = stream;
-        } catch (err) {
-            console.warn("Camera fallback: Simulated dark feed.");
-            video.style.background = "#000"; 
-        }
-    }
-
-    function switchView(viewId) {
-        document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-        const targetView = document.getElementById(viewId);
-        if(targetView) targetView.classList.add('active');
-        
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.add('opacity-60', 'text-on-surface-variant');
-            btn.classList.remove('text-primary');
-        });
-        const activeBtn = document.getElementById('nav-' + viewId);
-        if(activeBtn) {
-            activeBtn.classList.remove('opacity-60', 'text-on-surface-variant');
-            if(viewId !== 'view-ar') activeBtn.classList.add('text-primary');
+            if(viewId === 'view-replanteo') initAR();
         }
 
-        if(viewId === 'view-ar') {
-            initCamera();
-        } else {
-            drawer.classList.add('drawer-closed');
-            drawer.classList.remove('drawer-open');
-        }
-        window.scrollTo(0,0);
-    }
+        // Mock Layer Logic
+        const mockLayers = [
+            { id: 'vector-beams', name: 'ESTRUCTURA_PRINCIPAL', type: 'VIGA', color: '#f97316' },
+            { id: 'vector-columns', name: 'SOPORTES_CIMENTACION', type: 'COLUMNA', color: '#93ccff' },
+            { id: 'layer-grid', name: 'EJES_REFERENCIA', type: 'GRID', color: '#ffffff' }
+        ];
 
-    // AR Dynamic Simulation
-    const sensorData = { lat: 34.829119, lng: -58.129347, alt: 12.446, range: 14.302 };
-
-    setInterval(() => {
-        if(document.getElementById('view-ar').classList.contains('active')) {
-            sensorData.lat += (Math.random() - 0.5) * 0.000005;
-            sensorData.lng += (Math.random() - 0.5) * 0.000005;
-            sensorData.alt += (Math.random() - 0.5) * 0.003;
-            sensorData.range += (Math.random() - 0.5) * 0.004;
-
-            document.getElementById('coord-x').innerText = (sensorData.lat > 0 ? '+' : '') + sensorData.lat.toFixed(6);
-            document.getElementById('coord-y').innerText = (sensorData.lng > 0 ? '+' : '') + sensorData.lng.toFixed(6);
-            document.getElementById('coord-z').innerText = (sensorData.alt >= 0 ? '+' : '') + sensorData.alt.toFixed(3) + 'm';
-            document.getElementById('lidar-range').innerText = sensorData.range.toFixed(3) + 'm';
+        function processFile() {
+            const btn = event.currentTarget;
+            const original = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> PROCESANDO...';
             
-            document.getElementById('gyro-stability').innerText = (99.7 + Math.random() * 0.3).toFixed(1) + '%';
+            setTimeout(() => {
+                const container = document.getElementById('layers-container');
+                const empty = document.getElementById('layers-empty-state');
+                const list = document.getElementById('layers-list');
+                
+                empty.classList.add('hidden');
+                container.classList.remove('hidden');
+                document.getElementById('layer-count').innerText = '03 CAPAS DETECTADAS';
 
-            // Jitter for AR effect
-            const jitterX = Math.sin(Date.now() / 300) * 0.8;
-            const jitterY = Math.cos(Date.now() / 350) * 0.8;
-            svgOverlay.style.transform = `translate(${jitterX}px, ${jitterY}px)`;
+                list.innerHTML = mockLayers.map(l => `
+                    <div class="flex items-center justify-between p-4 glass-panel rounded-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="w-1.5 h-6 rounded-full" style="background: ${l.color}"></div>
+                            <div class="flex flex-col">
+                                <span class="text-[11px] font-bold text-white tracking-tight uppercase">${l.name}</span>
+                                <span class="text-[9px] font-mono text-white/40 uppercase">${l.type}</span>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer" onchange="toggleLayer('${l.id}', this.checked)">
+                            <div class="w-10 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                `).join('');
+
+                btn.disabled = false;
+                btn.innerHTML = original;
+                switchTab('view-capas');
+            }, 1500);
         }
-    }, 50);
 
-    // Interaction Handlers
-    document.getElementById('confirm-point-btn').addEventListener('click', function() {
-        const originalContent = this.innerHTML;
-        this.classList.replace('bg-primary', 'bg-emerald-500');
-        this.innerHTML = '<span class="material-symbols-outlined text-4xl">check_circle</span> CAPTURED';
-        if (window.navigator.vibrate) window.navigator.vibrate(80);
-        setTimeout(() => {
-            this.classList.replace('bg-emerald-500', 'bg-primary');
-            this.innerHTML = originalContent;
-        }, 1500);
-    });
-
-    document.getElementById('snap-cad-btn').addEventListener('click', function() {
-        svgOverlay.classList.remove('cad-lock-pulse');
-        void svgOverlay.offsetWidth; // Trigger reflow
-        svgOverlay.classList.add('cad-lock-pulse');
-        if (window.navigator.vibrate) window.navigator.vibrate([20, 10, 20]);
-    });
-
-    document.getElementById('cad-upload-input').addEventListener('change', function() {
-        if(this.files.length > 0) {
-            const hud = document.getElementById('upload-status-hud');
-            const bar = document.getElementById('upload-progress-bar');
-            const text = document.getElementById('upload-text');
-            hud.classList.remove('hidden');
-            let p = 0;
-            const interval = setInterval(() => {
-                p += 5;
-                bar.style.width = p + '%';
-                if(p > 80) text.innerText = 'Indexing...';
-                if(p >= 100) {
-                    clearInterval(interval);
-                    text.innerText = 'Ready';
-                    setTimeout(() => hud.classList.add('hidden'), 2000);
-                }
-            }, 60);
+        function toggleLayer(id, show) {
+            const el = document.getElementById(id);
+            if(el) el.style.opacity = show ? '1' : '0';
         }
-    });
 
-    window.addEventListener('load', initCamera);
-</script>
+        function updateCADOpacity(val) {
+            document.getElementById('cad-overlay').style.opacity = val / 100;
+            document.getElementById('opacity-val').innerText = val + '%';
+        }
+
+        // Simulated Sensors
+        let sensorVals = { x: 0.012, y: -0.008, z: 0.002, d: 12.045 };
+        setInterval(() => {
+            if(document.getElementById('view-replanteo').classList.contains('active')) {
+                sensorVals.x += (Math.random() - 0.5) * 0.002;
+                sensorVals.y += (Math.random() - 0.5) * 0.002;
+                sensorVals.z += (Math.random() - 0.5) * 0.0005;
+                sensorVals.d += (Math.random() - 0.5) * 0.004;
+
+                document.getElementById('coord-x').innerText = (sensorVals.x > 0 ? '+' : '') + sensorVals.x.toFixed(3);
+                document.getElementById('coord-y').innerText = (sensorVals.y > 0 ? '+' : '') + sensorVals.y.toFixed(3);
+                document.getElementById('coord-z').innerText = (sensorVals.z > 0 ? '+' : '') + sensorVals.z.toFixed(3) + 'm';
+                document.getElementById('lidar-dist').innerText = `RANGE: ${sensorVals.d.toFixed(3)}m`;
+                document.getElementById('stability-val').innerText = (99.7 + Math.random() * 0.2).toFixed(1) + '%';
+            }
+        }, 100);
+
+        // Confirm Action Simulation
+        document.getElementById('btn-confirm').addEventListener('click', function() {
+            const original = this.innerHTML;
+            this.classList.replace('bg-primary', 'bg-emerald-500');
+            this.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-4xl font-black">check_circle</span>
+                    <span class="text-2xl font-geist font-black uppercase tracking-tighter">Punto Guardado</span>
+                </div>
+            `;
+            if(navigator.vibrate) navigator.vibrate([20, 40, 20]);
+            setTimeout(() => {
+                this.classList.replace('bg-emerald-500', 'bg-primary');
+                this.innerHTML = original;
+            }, 1500);
+        });
+
+        // Initialize Camera
+        async function initAR() {
+            const video = document.getElementById('ar-camera-feed');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment" },
+                    audio: false 
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                video.style.background = "linear-gradient(135deg, #0c0805 0%, #1c110b 100%)";
+            }
+        }
+
+        window.addEventListener('load', initAR);
+    </script>
 </body></html>
