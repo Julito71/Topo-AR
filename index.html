@@ -1,10 +1,12 @@
-<!DOCTYPE html><html class="dark" lang="es"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>TopoAR Pro - Master Demo SPA</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
         .glass-panel {
             background: rgba(30, 41, 59, 0.8);
@@ -32,7 +34,7 @@
         .scanline {
             width: 100%;
             height: 2px;
-            background: rgba(249, 115, 22, 0.3);
+            background: rgba(255, 182, 144, 0.3);
             position: absolute;
             top: 0;
             left: 0;
@@ -43,11 +45,9 @@
             0% { top: 0; }
             100% { top: 100%; }
         }
-        .industrial-border { border: 1px solid rgba(255,255,255,0.1); }
         .view-section { display: none; }
         .view-section.active { display: block; }
         
-        /* Progress Animation for Verify View */
         @keyframes progress-stripes {
             from { background-position: 1rem 0; }
             to { background-position: 0 0; }
@@ -56,6 +56,32 @@
             background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
             background-size: 1rem 1rem;
             animation: progress-stripes 1s linear infinite;
+        }
+
+        /* Camera Feed Placeholder Animation */
+        @keyframes noise {
+            0% { transform: translate(0,0) }
+            10% { transform: translate(-5%,-5%) }
+            20% { transform: translate(-10%,5%) }
+            30% { transform: translate(5%,-10%) }
+            40% { transform: translate(-5%,15%) }
+            50% { transform: translate(-10%,5%) }
+            60% { transform: translate(15%,0) }
+            70% { transform: translate(0,10%) }
+            80% { transform: translate(-15%,0) }
+            90% { transform: translate(10%,5%) }
+            100% { transform: translate(5%,0) }
+        }
+        .camera-noise::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat;
+            opacity: 0.05;
+            animation: noise .5s infinite;
         }
     </style>
 <script id="tailwind-config">
@@ -105,7 +131,7 @@
 <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 px-container-margin py-3 flex justify-between items-center">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary">precision_manufacturing</span>
-<h1 class="font-data-mono text-lg font-bold text-primary tracking-tighter">SITE_OS_v2.4</h1>
+<h1 class="font-data-mono text-lg font-bold text-primary tracking-tighter uppercase">Topo_OS_v2.5</h1>
 </div>
 <div class="flex items-center gap-4">
 <span class="font-data-mono text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">RTK: 0.002m</span>
@@ -130,37 +156,25 @@
 <!-- Active Project -->
 <section class="glass-panel rounded-xl overflow-hidden group">
 <div class="h-40 relative">
-<img class="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxk1ESfpS89lgwNs_Yp1RRUZw8X7kkODGsDeUHLsxJbj5tXn7MpiaRC7ll5vDlAmnF1Y7S0pje1BzFCDL4xTmypVDW9IvhEmiljlsfKQ4hOy0MpC7I6-e892v-1qFga-DvrfBTePeDKI5zzkGF6n12w6mfZVfA3_b_xQguzKMFrnoCtul3WenUWQMvNPOg5898iz16jqR2UIbtHPuZit9K7TXCzHdaISc1z6OSYRbm79KuocGarClC">
+<img class="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxk1ESfpS89lgwNs_Yp1RRUZw8X7kkODGsDeUHLsxJbj5tXn7MpiaRC7ll5vDlAmnF1Y7S0pje1BzFCDL4xTmypVDW9IvhEmiljlsfKQ4hOy0MpC7I6-e892v-1qFga-DvrfBTePeDKI5zzkGF6n12w6mfZVfA3_b_xQguzKMFrnoCtul3WenUWQMvNPOg5898iz16jqR2UIbtHPuZit9K7TXCzHdaISc1z6OSYRbm79KuocGarClC"/>
 <div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
-<span class="absolute top-3 left-3 bg-primary text-on-primary text-[9px] font-bold px-2 py-0.5 rounded-full">SESIÓN ACTIVA</span>
+<span class="absolute top-3 left-3 bg-primary text-on-primary text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Sesión Activa</span>
 </div>
 <div class="p-5 flex justify-between items-center">
 <div>
-<h2 class="text-xl font-headline-lg">CENTRAL PLAZA AR</h2>
-<p class="text-xs text-on-surface-variant">Sector 7-B • Madrid, ES</p>
+<h2 class="text-xl font-headline-lg">RECONQUISTA SF</h2>
+<p class="text-xs text-on-surface-variant">Zona Industrial • Santa Fe, AR</p>
 </div>
-<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-bold active:scale-95 transition-transform" onclick="switchView('view-ar')">ABRIR</button>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-bold active:scale-95 transition-transform uppercase" onclick="switchView('view-ar')">Abrir HUD</button>
 </div>
-</section><section class="glass-panel rounded-xl p-6 border border-primary/20 bg-primary/5 flex flex-col items-center text-center gap-4">
-<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
-<span class="material-symbols-outlined text-primary-container text-3xl">github</span>
-</div>
-<div>
-<h3 class="text-lg font-headline-lg text-primary-container uppercase tracking-tight">Exportar a GitHub</h3>
-<p class="text-xs text-on-surface-variant">Prepara el proyecto 'Master Demo Completa' para despliegue en GitHub Pages como PWA.</p>
-</div>
-<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg font-bold active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg" onclick="document.getElementById('github-export-modal').classList.remove('hidden')">
-<span class="material-symbols-outlined">publish</span>
-    EXPORTAR PROYECTO
-  </button>
 </section>
-<!-- Carga de Planos Section (Integrated from SCREEN_22) -->
+<!-- Carga de Planos Section -->
 <section class="glass-panel rounded-xl p-8 border-2 border-dashed border-primary/30 text-center cursor-pointer hover:bg-primary/5 transition-all relative overflow-hidden" id="upload-flow-container">
-<input accept=".dwg,.dxf,.ifc" class="hidden" id="cad-upload-input" type="file">
+<input accept=".dwg,.dxf,.ifc" class="hidden" id="cad-upload-input" type="file"/>
 <div id="upload-state-initial">
 <span class="material-symbols-outlined text-primary text-5xl mb-4">upload_file</span>
-<h3 class="text-lg font-headline-lg mb-1 uppercase tracking-tight">CARGAR PLANOS</h3>
-<p class="text-sm text-on-surface-variant mb-6">DWG, DXF o IFC para vectorización AR.</p>
+<h3 class="text-lg font-headline-lg mb-1 uppercase tracking-tight">Cargar Plano 1.dwg</h3>
+<p class="text-sm text-on-surface-variant mb-6">Actualizar base vectorial del proyecto.</p>
 <div class="flex justify-center gap-2">
 <span class="bg-surface-container-high px-3 py-1 rounded text-[10px] font-data-mono">.DWG</span>
 <span class="bg-surface-container-high px-3 py-1 rounded text-[10px] font-data-mono">.DXF</span>
@@ -174,8 +188,8 @@
 </div>
 <div class="hidden flex flex-col items-center" id="upload-state-success">
 <span class="material-symbols-outlined text-emerald-400 text-5xl mb-2">check_circle</span>
-<h3 class="text-lg font-headline-lg">VECTORIZADO</h3>
-<button class="mt-4 text-xs font-bold text-primary underline" onclick="switchView('view-ar')">INICIAR AR</button>
+<h3 class="text-lg font-headline-lg">Plano 1.dwg cargado</h3>
+<button class="mt-4 text-xs font-bold text-primary underline uppercase" onclick="switchView('view-ar')">Iniciar AR</button>
 </div>
 </section>
 <!-- System Log -->
@@ -184,31 +198,21 @@
 <span class="text-[10px] font-bold text-on-surface-variant flex items-center gap-1 uppercase tracking-widest"><span class="material-symbols-outlined text-xs">terminal</span> System Log</span>
 <span class="text-[9px] text-emerald-400 font-data-mono uppercase">Live</span>
 </div>
-<div class="p-4 h-32 overflow-y-auto custom-scrollbar font-data-mono text-[11px] space-y-1 opacity-70">
-<div class="flex gap-2"><span class="">[14:02]</span> <span class="text-on-surface">Motor LiDAR inicializado.</span></div>
-<div class="flex gap-2"><span class="">[14:03]</span> <span class="text-emerald-400">Sincronización GPS establecida.</span></div>
-<div class="flex gap-2"><span class="">[14:04]</span> <span class="text-primary">Esperando vectorización...</span></div>
+<div class="p-4 h-32 overflow-y-auto custom-scrollbar font-data-mono text-[11px] space-y-1 opacity-70" id="system-log-content">
+<div class="flex gap-2"><span class="">[16:40]</span> <span class="text-on-surface">Motor LiDAR inicializado.</span></div>
+<div class="flex gap-2"><span class="">[16:41]</span> <span class="text-emerald-400">Sincronización GPS: Reconquista, SF.</span></div>
+<div class="flex gap-2"><span class="">[16:42]</span> <span class="text-primary">Plano 1.dwg cargado correctamente.</span></div>
 </div>
 </section>
 </main>
-<!-- View: Verify (Stages) (Integrated from SCREEN_20) -->
+<!-- View: Verify (Stages) -->
 <main class="view-section pt-20 pb-32 px-container-margin max-w-3xl mx-auto space-y-6" id="view-verify">
 <header class="mb-8">
 <h2 class="text-2xl font-headline-lg uppercase tracking-tight">Gestión de Etapas</h2>
-<p class="text-sm text-on-surface-variant">Proyecto: Terminal Expansion | ID: #8829-TX</p>
+<p class="text-sm text-on-surface-variant">Proyecto: Reconquista | ID: #9921-SF</p>
 </header>
-<!-- Critical Alert -->
-<div class="bg-error/20 border border-error p-4 rounded-xl flex items-center gap-4">
-<span class="material-symbols-outlined text-error text-3xl">warning</span>
-<div>
-<p class="text-sm font-bold text-error uppercase">Desviación Detectada</p>
-<p class="text-xs text-on-surface-variant">Sector 4-B: Desfase &gt; 15mm en cimentación.</p>
-</div>
-<button class="ml-auto bg-error text-on-error text-xs font-bold px-4 py-2 rounded">Revisar</button>
-</div>
 <!-- Timeline -->
 <div class="relative pl-8 border-l-2 border-white/10 ml-4 space-y-8">
-<!-- Stage 1 -->
 <div class="relative">
 <div class="absolute -left-[41px] top-0 w-6 h-6 bg-emerald-500 rounded-full border-4 border-surface flex items-center justify-center">
 <span class="material-symbols-outlined text-white text-[14px]">check</span>
@@ -218,86 +222,78 @@
 <h3 class="font-bold line-through">Excavación</h3>
 <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded uppercase">Completado</span>
 </div>
-<p class="text-xs font-data-mono">LiDAR Verificado: 2023-10-14</p>
+<p class="text-xs font-data-mono">LiDAR Verificado: 2024-05-10</p>
 </div>
 </div>
-<!-- Stage 2 -->
 <div class="relative">
 <div class="absolute -left-[41px] top-0 w-6 h-6 bg-primary rounded-full border-4 border-surface led-pulse"></div>
 <div class="glass-panel p-5 rounded-xl border border-primary/30">
 <div class="flex justify-between items-start mb-4">
 <div>
-<h3 class="text-lg font-headline-lg text-primary uppercase">Cimentación</h3>
-<p class="text-xs text-on-surface-variant">Activo: Armado de Sector 4-B</p>
+<h3 class="text-lg font-headline-lg text-primary uppercase">Montaje de Vigas</h3>
+<p class="text-xs text-on-surface-variant">Activo: Sector A - Nivel 0</p>
 </div>
-<span class="text-2xl font-data-mono text-primary">68%</span>
+<span class="text-2xl font-data-mono text-primary">42%</span>
 </div>
 <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden mb-6">
-<div class="h-full bg-primary progress-animate" style="width: 68%;"></div>
+<div class="h-full bg-primary progress-animate" style="width: 42%;"></div>
 </div>
-<div class="space-y-3">
-<label class="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
-<input checked="" class="rounded border-white/10 bg-transparent text-primary focus:ring-0" type="checkbox">
-<span class="text-sm">Colocación de Armaduras</span>
-</label>
-<label class="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
-<input class="rounded border-white/10 bg-transparent text-primary focus:ring-0" type="checkbox">
-<span class="text-sm">Nivelación Láser</span>
-</label>
-</div>
-<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold flex items-center justify-center gap-2" onclick="switchView('view-ar')">
-<span class="material-symbols-outlined text-lg">view_in_ar</span> LANZAR HUD AR
+<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold flex items-center justify-center gap-2 uppercase" onclick="switchView('view-ar')">
+<span class="material-symbols-outlined text-lg">view_in_ar</span> Lanzar HUD AR
                     </button>
 </div>
 </div>
 </div>
 </main>
-<!-- View: AR Experience (HUD) (Integrated from SCREEN_58) -->
-<main class="view-section fixed inset-0 z-40 bg-black pt-20" id="view-ar">
-<!-- AR Background Mock -->
-<div class="absolute inset-0 bg-cover bg-center opacity-40 grayscale" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDW3xg6Rrv_rqX7DCVC0eBzudRVJXeVKSjXVUmnv0XDcI1Okq6yrzMvfos944eplLznkGIAUl6MZ8XWu21m5pv5DsbGyKgT0mQVCO3Y8Ml3qR9_OKcBY39HFdwR_NCZzTPYJMD3crH8jVsn8HJrobe0SnmL-u1Raif6UaBXI1ZGa4TiZybSu37Lq35ZPAB3A6u-p5Er90Fmmu8-NHQ5hWlz6wEnMaJ_aBVtyf8Ek_zzkk4BZ6t05zj6')"></div><svg class="absolute inset-0 w-full h-full pointer-events-none opacity-80" viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,182,144,0.1)" stroke-width="0.5"></path>
-    </pattern>
-  </defs>
-  <rect width="100%" height="100%" fill="url(#grid)"></rect>
-  <!-- CAD Lines -->
-  <path d="M 50 200 L 350 200 L 350 600 L 50 600 Z" fill="none" stroke="#ffb690" stroke-width="1.5" stroke-dasharray="4 2"></path>
-  <path d="M 50 400 L 350 400" fill="none" stroke="#ffb690" stroke-width="1"></path>
-  <path d="M 200 200 L 200 600" fill="none" stroke="#ffb690" stroke-width="1"></path>
-  <!-- Dimensions -->
-  <text x="200" y="190" fill="#ffb690" font-family="JetBrains Mono" font-size="10" text-anchor="middle">32.450m</text>
-  <text x="360" y="400" fill="#ffb690" font-family="JetBrains Mono" font-size="10" transform="rotate(90 360 400)" text-anchor="middle">18.200m</text>
-  <!-- Axes -->
-  <line x1="0" y1="400" x2="400" y2="400" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"></line>
-  <line x1="200" y1="0" x2="200" y2="800" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"></line>
+<!-- View: AR Experience (HUD) -->
+<main class="view-section fixed inset-0 z-40 bg-zinc-900 pt-20 overflow-hidden" id="view-ar">
+<!-- AR Camera Feed Placeholder (Animated Noise/Dark Surface) -->
+<div class="absolute inset-0 bg-[#0a0a0a] camera-noise"></div>
+<!-- CAD Vector Overlay (High Contrast Brand Orange) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none opacity-90" id="ar-vector-overlay" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="grid-ar" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,182,144,0.08)" stroke-width="0.5"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid-ar)" height="100%" width="100%"></rect>
+<!-- CAD Lines: Plano 1.dwg - Structural Beams -->
+<g class="cad-layer-beams" stroke="#ffb690" stroke-width="1.8">
+<path d="M 50 200 L 350 200 L 350 300 L 50 300 Z" fill="rgba(255,182,144,0.1)"></path>
+<path d="M 50 350 L 350 350 L 350 450 L 50 450 Z" fill="rgba(255,182,144,0.1)"></path>
+<path d="M 50 500 L 350 500 L 350 600 L 50 600 Z" fill="rgba(255,182,144,0.1)"></path>
+<!-- Cross Bracing -->
+<path d="M 50 200 L 350 300" opacity="0.5" stroke-dasharray="4 4"></path>
+<path d="M 350 200 L 50 300" opacity="0.5" stroke-dasharray="4 4"></path>
+</g>
+<!-- Annotations -->
+<text fill="#ffb690" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="200" y="190">VIGA_PRINCIPAL_01 [24.50m]</text>
+<!-- Calibration Crosshair -->
+<line stroke="rgba(255,255,255,0.1)" stroke-width="0.5" x1="0" x2="400" y1="400" y2="400"></line>
+<line stroke="rgba(255,255,255,0.1)" stroke-width="0.5" x1="200" x2="200" y1="0" y2="800"></line>
 </svg>
 <div class="scanline"></div>
 <!-- HUD Overlays -->
 <div class="absolute inset-0 p-container-margin flex flex-col pointer-events-none pt-24 pb-32">
 <div class="flex justify-between items-start">
 <div class="space-y-2 pointer-events-auto">
-<div class="glass-panel p-3 rounded-lg border border-primary/20 flex items-center gap-3">
+<div class="glass-panel p-3 rounded-lg border border-primary/40 flex items-center gap-3">
 <div class="w-2 h-2 bg-primary led-pulse"></div>
 <span class="text-[10px] font-bold uppercase tracking-widest">CAPA ACTIVA: VIGAS</span>
 </div>
-<div class="glass-panel p-3 rounded-lg border border-white/10 flex items-center gap-3">
-<span class="material-symbols-outlined text-primary text-sm">blur_on</span>
-<span class="text-[10px] font-bold uppercase tracking-widest">MESH: 42K POLY/S</span>
-</div><div class="glass-panel p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 flex items-center gap-3">
-  <span class="material-symbols-outlined text-emerald-400 text-sm">description</span>
-  <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">PLANO ACTIVO: RECONQUISTA_V1.DWG</span>
+<div class="glass-panel p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-400 text-sm">description</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">PLANO ACTIVO: PLANO 1.DWG</span>
 </div>
 </div>
 <div class="glass-panel p-3 rounded-lg text-right pointer-events-auto">
 <div class="text-[9px] text-on-surface-variant uppercase">Estabilidad Gyro</div>
-<div class="text-lg font-data-mono text-primary">99.8%</div>
+<div class="text-lg font-data-mono text-primary" id="gyro-stability">99.8%</div>
 </div>
 </div>
 <div class="flex-grow flex items-center justify-center">
 <div class="relative w-48 h-48 flex items-center justify-center">
-<div class="absolute inset-0 border border-primary/30 rounded-full animate-ping"></div>
+<div class="absolute inset-0 border border-primary/30 rounded-full animate-ping opacity-20"></div>
 <div class="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary"></div>
 <div class="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary"></div>
 <div class="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary"></div>
@@ -307,78 +303,52 @@
 </div>
 <div class="flex flex-col gap-4 pointer-events-auto">
 <div class="glass-panel p-4 rounded-xl border border-primary/20">
-<h3 class="text-[10px] font-bold text-primary mb-3 uppercase tracking-widest">REAL-TIME DELTA (m)</h3>
+<h3 class="text-[10px] font-bold text-primary mb-3 uppercase tracking-widest">Coordenadas Tiempo Real (m)</h3>
 <div class="grid grid-cols-3 gap-4 font-data-mono">
-<div><div class="text-[9px] opacity-50 uppercase">Offset X</div><div class="text-lg">+0.004</div></div>
-<div class="border-l border-white/10 pl-4"><div class="text-[9px] opacity-50 uppercase">Offset Y</div><div class="text-lg">-0.012</div></div>
-<div class="border-l border-white/10 pl-4"><div class="text-[9px] opacity-50 uppercase">Offset Z</div><div class="text-lg text-emerald-400">+0.001</div></div>
+<div><div class="text-[9px] opacity-50 uppercase">Offset X</div><div class="text-lg" id="coord-x">+0.004</div></div>
+<div class="border-l border-white/10 pl-4"><div class="text-[9px] opacity-50 uppercase">Offset Y</div><div class="text-lg" id="coord-y">-0.012</div></div>
+<div class="border-l border-white/10 pl-4"><div class="text-[9px] opacity-50 uppercase">Offset Z</div><div class="text-lg text-emerald-400" id="coord-z">+0.001</div></div>
 </div>
 </div>
 <div class="flex gap-2">
-<button class="flex-1 bg-white/10 backdrop-blur-md py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-transform border border-white/10">SNAP TO CAD</button>
-<button class="flex-1 bg-primary text-on-primary py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-transform">CONFIRM POINT</button>
+<button class="flex-1 bg-white/10 backdrop-blur-md py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-transform border border-white/10">Snap to CAD</button>
+<button class="flex-1 bg-primary text-on-primary py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-transform shadow-lg shadow-primary/20" id="confirm-point-btn">Confirm Point</button>
 </div>
 </div>
 </div>
 </main>
-<!-- View: System (Closure) (Integrated from SCREEN_5) -->
+<!-- View: System (Closure) -->
 <main class="view-section pt-20 pb-32 px-container-margin max-w-4xl mx-auto space-y-6" id="view-system">
 <header class="mb-6">
 <h2 class="text-2xl font-headline-lg uppercase tracking-tight">Sistema y Cierre</h2>
 <p class="text-sm text-on-surface-variant">Configuración final y entrega de proyecto.</p>
 </header>
-<!-- Final Delivery Status -->
 <section class="glass-panel p-6 rounded-xl border border-emerald-500/30 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
 <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-500/40">
 <span class="material-symbols-outlined text-4xl">verified</span>
 </div>
 <div class="flex-grow text-center md:text-left">
 <h3 class="text-xl font-headline-lg">Validado por LiDAR</h3>
-<p class="text-sm text-on-surface-variant">Puntos verificados contra sistema de coordenadas local.</p>
+<p class="text-sm text-on-surface-variant">Precisión verificada en Reconquista, SF.</p>
 </div>
 <div class="text-center md:text-right">
-<span class="text-[10px] text-on-surface-variant uppercase font-bold">Código de Entrega</span>
-<div class="bg-surface-container px-3 py-1 font-data-mono text-primary rounded border border-white/10">TX-990-22A</div>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Lote ID</span>
+<div class="bg-surface-container px-3 py-1 font-data-mono text-primary rounded border border-white/10">SF-REC-24X</div>
 </div>
 </section>
-<!-- Metrics -->
 <section class="grid grid-cols-2 gap-4">
 <div class="glass-panel p-4 rounded-xl border border-white/5">
 <span class="text-[10px] text-on-surface-variant uppercase font-bold">Error RMS Final</span>
 <div class="text-2xl font-data-mono mt-1">0.008m</div>
-<div class="text-[10px] text-emerald-400 font-bold uppercase mt-1">Precisión Óptima</div>
 </div>
 <div class="glass-panel p-4 rounded-xl border border-white/5">
 <span class="text-[10px] text-on-surface-variant uppercase font-bold">Duración Sesión</span>
-<div class="text-2xl font-data-mono mt-1">04:22:15</div>
-<div class="text-[10px] text-on-surface-variant uppercase mt-1">Field Ops Done</div>
+<div class="text-2xl font-data-mono mt-1">02:15:10</div>
 </div>
 </section>
-<!-- Handover Package -->
-<section class="space-y-4">
-<h4 class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest pl-2">Payload Manifest</h4>
-<div class="glass-panel rounded-xl overflow-hidden divide-y divide-white/5">
-<div class="flex items-center p-4 hover:bg-white/5 transition-colors cursor-pointer group">
-<span class="material-symbols-outlined p-2 border border-white/10 rounded-lg group-hover:bg-primary group-hover:text-on-primary transition-colors">description</span>
-<div class="ml-4 flex-grow">
-<p class="text-sm font-bold">Project_A102_Final.pdf</p>
-<p class="text-[10px] text-on-surface-variant">Reporte de Validación | 4.2 MB</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant">download</span>
-</div>
-<div class="flex items-center p-4 hover:bg-white/5 transition-colors cursor-pointer group">
-<span class="material-symbols-outlined p-2 border border-white/10 rounded-lg group-hover:bg-primary group-hover:text-on-primary transition-colors">layers</span>
-<div class="ml-4 flex-grow">
-<p class="text-sm font-bold">Site_Plan_AsBuilt.dxf</p>
-<p class="text-[10px] text-on-surface-variant">Formato CAD | 18.7 MB</p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant">download</span>
-</div>
-</div>
-<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-xl font-bold text-lg shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3">
-<span class="material-symbols-outlined">archive</span> GENERAR ARCHIVO AS-BUILT
-            </button>
-</section>
+<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-xl font-bold text-lg shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3 uppercase">
+<span class="material-symbols-outlined">archive</span> Generar Reporte Final
+</button>
 </main>
 <!-- Bottom Navigation Bar -->
 <nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-white/10 flex justify-around items-center p-4 pb-8">
@@ -392,7 +362,7 @@
 </button>
 <button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-ar" onclick="switchView('view-ar')">
 <span class="material-symbols-outlined">view_in_ar</span>
-<span class="text-[10px] font-bold uppercase">AR</span>
+<span class="text-[10px] font-bold uppercase">HUD AR</span>
 </button>
 <button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-system" onclick="switchView('view-system')">
 <span class="material-symbols-outlined">settings_input_component</span>
@@ -402,14 +372,11 @@
 <!-- SPA logic -->
 <script>
         function switchView(viewId) {
-            // Hide all views
             document.querySelectorAll('.view-section').forEach(view => {
                 view.classList.remove('active');
             });
-            // Show target view
             document.getElementById(viewId).classList.add('active');
             
-            // Update Nav Icons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.add('opacity-60', 'text-on-surface-variant');
                 btn.classList.remove('text-primary');
@@ -419,12 +386,47 @@
                 activeBtn.classList.remove('opacity-60', 'text-on-surface-variant');
                 activeBtn.classList.add('text-primary');
             }
-
-            // Reset scroll
             window.scrollTo(0,0);
         }
 
-        // Carga de Planos Flow (Integrated Script from SCREEN_22)
+        // Coordinate Jitter & Movement Simulation
+        const coords = { x: 0.004, y: -0.012, z: 0.001 };
+        const coordEls = {
+            x: document.getElementById('coord-x'),
+            y: document.getElementById('coord-y'),
+            z: document.getElementById('coord-z'),
+            stability: document.getElementById('gyro-stability')
+        };
+
+        setInterval(() => {
+            const activeAr = document.getElementById('view-ar').classList.contains('active');
+            if(activeAr) {
+                // Simulate device micro-movement
+                coords.x += (Math.random() - 0.5) * 0.0005;
+                coords.y += (Math.random() - 0.5) * 0.0005;
+                coords.z += (Math.random() - 0.5) * 0.0002;
+                
+                coordEls.x.innerText = (coords.x >= 0 ? '+' : '') + coords.x.toFixed(4);
+                coordEls.y.innerText = (coords.y >= 0 ? '+' : '') + coords.y.toFixed(4);
+                coordEls.z.innerText = (coords.z >= 0 ? '+' : '') + coords.z.toFixed(4);
+                
+                // Stability jitter
+                const stabilityVal = (99.5 + Math.random() * 0.4).toFixed(1);
+                coordEls.stability.innerText = stabilityVal + '%';
+            }
+        }, 150);
+
+        // Confirm Point Button Interaction
+        document.getElementById('confirm-point-btn').addEventListener('click', function() {
+            this.classList.add('bg-emerald-500', 'text-white');
+            this.innerText = 'POINT CAPTURED';
+            setTimeout(() => {
+                this.classList.remove('bg-emerald-500', 'text-white');
+                this.innerText = 'CONFIRM POINT';
+            }, 2000);
+        });
+
+        // Upload Simulation
         (function() {
             const container = document.getElementById('upload-flow-container');
             const input = document.getElementById('cad-upload-input');
@@ -435,15 +437,13 @@
             const status = document.getElementById('upload-status-text');
 
             const steps = [
-              { p: 25, t: 'Reading Geometry...' },
-              { p: 50, t: 'Vectorizing Layers...' },
-              { p: 75, t: 'Optimizing for LiDAR...' },
-              { p: 100, t: 'CAD Ready' }
+              { p: 30, t: 'Reading Layer: VIGAS...' },
+              { p: 60, t: 'Calibrating Coord System...' },
+              { p: 100, t: 'Plano 1.dwg Ready' }
             ];
 
             container.addEventListener('click', () => {
-                if(initial.classList.contains('hidden') && !success.classList.contains('hidden')) return;
-                input.click();
+                if(!initial.classList.contains('hidden')) input.click();
             });
             
             input.addEventListener('change', () => {
@@ -463,27 +463,11 @@
                     setTimeout(() => {
                       progress.classList.add('hidden');
                       success.classList.remove('hidden');
-                    }, 500);
+                    }, 400);
                   }
-                }, 600);
+                }, 800);
               }
             });
         })();
-
-        // AR HUD Jitter Mock
-        setInterval(() => {
-            const activeAr = document.getElementById('view-ar').classList.contains('active');
-            if(activeAr) {
-                document.querySelectorAll('.font-data-mono.text-lg').forEach(el => {
-                    if(!el.innerText.includes('+') && !el.innerText.includes('-')) return;
-                    const val = parseFloat(el.innerText);
-                    const jitter = (Math.random() - 0.5) * 0.001;
-                    const newVal = (val + jitter).toFixed(3);
-                    el.innerText = (newVal >= 0 ? '+' : '') + newVal;
-                });
-            }
-        }, 800);
     </script>
-
-
 </body></html>
