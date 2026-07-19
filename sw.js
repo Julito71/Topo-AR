@@ -1,26 +1,16 @@
-# 5. sw.js
+# 5. sw.js (Service Worker)
 
-Crea un archivo llamado `sw.js` en GitHub y pega este contenido:
+Crea un archivo llamado `sw.js` en GitHub y pega esto:
 
 ```javascript
-const CACHE_NAME = 'topoar-pro-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './script.js',
-  './manifest.json'
-];
+const CACHE_NAME = 'topoar-v3';
+const ASSETS = ['./', './index.html', './styles.css', './script.js', './manifest.json'];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
-  );
+self.addEventListener('fetch', (e) => {
+  e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
 });
 ```
