@@ -1,0 +1,23 @@
+{
+  "name": "TopoAR Pro",
+  "short_name": "TopoAR",
+  "description": "Ingeniería Topográfica y WebXR para iPhone 16 Pro",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1c110b",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "{{DATA:IMAGE:IMAGE_48}}",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "{{DATA:IMAGE:IMAGE_48}}",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
