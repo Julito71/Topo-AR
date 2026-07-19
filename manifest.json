@@ -1,12 +1,12 @@
 # 4. manifest.json
 
-Crea un archivo llamado `manifest.json` en GitHub y pega este contenido:
+Crea un archivo llamado `manifest.json` en GitHub y pega esto:
 
 ```json
 {
   "name": "TopoAR Pro",
   "short_name": "TopoAR",
-  "description": "Ingeniería Topográfica y WebXR para iPhone 16 Pro",
+  "description": "Ingeniería Topográfica para iPhone 16 Pro",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1c110b",
