@@ -16,6 +16,7 @@
             background-color: black;
             margin: 0;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         .glass-panel {
             background: rgba(28, 17, 11, 0.85);
@@ -57,12 +58,22 @@
         .drawer-closed { transform: translateX(100%); }
         .drawer-open { transform: translateX(0); }
         
-        /* High Contrast Support for Outdoor Visibility */
         .high-vis-text {
             text-shadow: 0 1px 2px rgba(0,0,0,0.9);
         }
-        .high-vis-border {
-            border: 2px solid rgba(249, 115, 22, 0.6);
+        
+        /* iPhone 16 Pro Safe Areas */
+        .safe-top { padding-top: env(safe-area-inset-top); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+        
+        /* CAD Pulse Effect */
+        .cad-lock-pulse {
+            animation: lock-pulse 0.4s ease-out;
+        }
+        @keyframes lock-pulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(2); }
+            100% { transform: scale(1); filter: brightness(1); }
         }
     </style>
 <script id="tailwind-config">
@@ -106,11 +117,11 @@
     </script>
 </head>
 <body class="text-on-surface font-body-lg min-h-screen selection:bg-primary/30">
-<!-- Global Camera Feed (Background) -->
+<!-- Global Camera Feed -->
 <video autoplay="" id="ar-camera-feed" muted="" playsinline=""></video>
 <div class="scanline z-10 pointer-events-none"></div>
 <!-- Persistent Header -->
-<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-white/10 px-4 py-2 flex justify-between items-center h-12">
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-white/10 px-4 flex justify-between items-center h-14 safe-top">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-primary text-xl">precision_manufacturing</span>
 <h1 class="font-data-mono text-sm font-bold text-primary tracking-tighter uppercase">TOPO_OS_v2.5</h1>
@@ -124,39 +135,50 @@
 </div>
 </header>
 <!-- View: AR HUD (Primary View) -->
-<main class="view-section active fixed inset-0 z-20 pt-12" id="view-ar">
-<!-- CAD Vector Overlay (Canvas-like) -->
-<svg class="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-80 transition-transform duration-100" id="ar-vector-overlay" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
-<g fill="none" id="layer-vigas" stroke="#f97316" stroke-width="4">
-<path d="M 50 250 L 350 250 L 350 350 L 50 350 Z"></path>
-<path d="M 50 250 L 350 350" opacity="0.4" stroke-dasharray="8 6"></path>
+<main class="view-section active fixed inset-0 z-20 pt-14" id="view-ar">
+<!-- CAD Vector Overlay (plano 1.dwg simulation) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-80" id="ar-vector-overlay" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
+<!-- Ejes (Axes) Layer -->
+<g id="layer-ejes" stroke="rgba(255, 255, 255, 0.4)" stroke-dasharray="10,5" stroke-width="1">
+<line x1="0" x2="400" y1="200" y2="200"></line>
+<line x1="0" x2="400" y1="400" y2="400"></line>
+<line x1="0" x2="400" y1="600" y2="600"></line>
+<line x1="100" x2="100" y1="0" y2="800"></line>
+<line x1="300" x2="300" y1="0" y2="800"></line>
 </g>
-<g class="hidden" fill="rgba(249, 115, 22, 0.3)" id="layer-columnas" stroke="#f97316" stroke-width="4">
-<circle cx="50" cy="250" r="12"></circle>
-<circle cx="350" cy="250" r="12"></circle>
-<circle cx="50" cy="350" r="12"></circle>
-<circle cx="350" cy="350" r="12"></circle>
+<!-- Vigas (Beams) Layer -->
+<g fill="none" id="layer-vigas" stroke="#f97316" stroke-width="3">
+<path d="M 100 200 L 300 200 L 300 600 L 100 600 Z"></path>
+<path d="M 100 400 L 300 400"></path>
+<!-- Interior diagonal for framing -->
+<path d="M 100 200 L 300 400" opacity="0.3" stroke-dasharray="4 4"></path>
 </g>
-<g class="hidden" fill="rgba(147, 204, 255, 0.2)" id="layer-slabs" stroke="#93ccff" stroke-width="2">
-<rect height="400" width="300" x="50" y="200"></rect>
+<!-- Columnas (Columns) Layer -->
+<g fill="rgba(249, 115, 22, 0.2)" id="layer-columnas" stroke="#f97316" stroke-width="3">
+<circle cx="100" cy="200" r="10"></circle>
+<circle cx="300" cy="200" r="10"></circle>
+<circle cx="100" cy="400" r="10"></circle>
+<circle cx="300" cy="400" r="10"></circle>
+<circle cx="100" cy="600" r="10"></circle>
+<circle cx="300" cy="600" r="10"></circle>
 </g>
 </svg>
 <!-- HUD Layout -->
-<div class="absolute inset-0 p-4 flex flex-col pointer-events-none pt-4 pb-28">
-<!-- Top Metrics & Quick Controls -->
+<div class="absolute inset-0 p-4 flex flex-col pointer-events-none pb-28">
+<!-- Top Metrics -->
 <div class="flex justify-between items-start pointer-events-auto">
 <div class="space-y-3">
-<button class="glass-panel p-3 rounded-xl flex items-center gap-3 border-2 border-primary/50 text-primary shadow-2xl active:scale-95 transition-all" onclick="toggleDrawer()">
+<button class="glass-panel p-4 rounded-xl flex items-center gap-3 border-2 border-primary/50 text-primary shadow-2xl active:scale-95 transition-all" onclick="toggleDrawer()">
 <span class="material-symbols-outlined text-2xl">layers</span>
 <span class="text-xs font-bold uppercase tracking-widest">CAPAS</span>
 </button>
 <div class="relative">
 <input accept=".dwg,.dxf" class="hidden" id="cad-upload-input" type="file"/>
-<button class="glass-panel p-3 rounded-xl flex items-center gap-3 border-2 border-white/30 text-white shadow-xl active:scale-95 transition-all" onclick="document.getElementById('cad-upload-input').click()">
+<button class="glass-panel p-4 rounded-xl flex items-center gap-3 border-2 border-white/30 text-white shadow-xl active:scale-95 transition-all" onclick="document.getElementById('cad-upload-input').click()">
 <span class="material-symbols-outlined text-2xl">upload_file</span>
-<span class="text-xs font-bold uppercase tracking-widest">Load CAD</span>
+<span class="text-xs font-bold uppercase tracking-widest">LOAD CAD</span>
 </button>
-<!-- Upload Feedback -->
+<!-- Upload Status -->
 <div class="hidden absolute top-0 left-full ml-2 w-32 glass-panel p-2 rounded-lg" id="upload-status-hud">
 <div class="h-1 bg-surface-container rounded-full overflow-hidden">
 <div class="h-full bg-primary" id="upload-progress-bar" style="width: 0%"></div>
@@ -165,159 +187,145 @@
 </div>
 </div>
 </div>
-<!-- Orientation HUD -->
-<div class="glass-panel px-4 py-2 rounded-xl flex gap-6 border-2 border-white/20 items-center shadow-2xl">
+<!-- Orientation Status -->
+<div class="glass-panel px-4 py-3 rounded-xl flex gap-6 border-2 border-white/20 items-center shadow-2xl">
 <div class="flex flex-col">
-<span class="text-[8px] text-on-surface-variant font-bold uppercase mb-1">Stability</span>
+<span class="text-[8px] text-on-surface-variant font-bold uppercase mb-1">STABILITY</span>
 <span class="text-sm font-data-mono text-primary font-bold" id="gyro-stability">99.9%</span>
 </div>
 <div class="w-px h-6 bg-white/20"></div>
 <div class="flex flex-col">
-<span class="text-[8px] text-on-surface-variant font-bold uppercase mb-1">Target</span>
-<span class="text-sm font-data-mono text-emerald-400 font-bold">VIGA_01</span>
+<span class="text-[8px] text-on-surface-variant font-bold uppercase mb-1">TARGET</span>
+<span class="text-sm font-data-mono text-emerald-400 font-bold">PLANO_1:VIGA_02</span>
 </div>
 </div>
 </div>
-<!-- Central Reticle (LiDAR Focus) -->
+<!-- Central Reticle -->
 <div class="flex-grow flex items-center justify-center">
-<div class="relative w-48 h-48 flex items-center justify-center">
-<!-- Outer Ring -->
+<div class="relative w-56 h-56 flex items-center justify-center">
 <div class="absolute inset-0 border-2 border-primary/30 rounded-full animate-pulse"></div>
-<!-- Crosshair Corners -->
-<div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-sm"></div>
-<div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-sm"></div>
-<div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-sm"></div>
-<div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-sm"></div>
-<!-- Center Dot -->
-<div class="w-2 h-2 bg-primary rounded-full shadow-[0_0_15px_#f97316] ring-4 ring-primary/20"></div>
-<!-- Range text -->
-<div class="absolute -bottom-10 bg-black/60 px-3 py-1 rounded text-primary font-data-mono text-xs font-bold border border-primary/40 backdrop-blur-sm">
-                    RANGE: <span id="lidar-range">14.285m</span>
+<!-- Crosshairs -->
+<div class="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-primary rounded-tl-sm"></div>
+<div class="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-primary rounded-tr-sm"></div>
+<div class="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-primary rounded-bl-sm"></div>
+<div class="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-primary rounded-br-sm"></div>
+<!-- Center point -->
+<div class="w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_20px_#f97316] ring-4 ring-primary/20"></div>
+<div class="absolute -bottom-12 bg-black/80 px-4 py-1.5 rounded-lg text-primary font-data-mono text-xs font-bold border-2 border-primary/40 backdrop-blur-md">
+                    RANGE: <span id="lidar-range">14.302m</span>
 </div>
 </div>
 </div>
-<!-- Real-Time Geo-Data & Action Zone -->
+<!-- Data Dashboard -->
 <div class="space-y-4 pointer-events-auto">
-<!-- Coordinates Dashboard -->
-<div class="glass-panel p-4 rounded-2xl border-2 border-white/20 shadow-2xl flex flex-col gap-3">
-<div class="grid grid-cols-3 gap-2">
-<div class="bg-black/40 p-2 rounded-lg border border-white/5">
-<span class="text-[8px] font-bold text-on-surface-variant uppercase block">Latitude / X</span>
-<span class="text-xs font-data-mono font-bold text-white tracking-tighter" id="coord-x">+34.829122</span>
+<div class="glass-panel p-4 rounded-2xl border-2 border-white/20 shadow-2xl flex flex-col gap-4">
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-black/60 p-3 rounded-xl border border-white/10">
+<span class="text-[8px] font-black text-on-surface-variant uppercase block mb-1">Latitude / X</span>
+<span class="text-xs font-data-mono font-bold text-white tracking-tighter" id="coord-x">+34.829119</span>
 </div>
-<div class="bg-black/40 p-2 rounded-lg border border-white/5">
-<span class="text-[8px] font-bold text-on-surface-variant uppercase block">Longitude / Y</span>
-<span class="text-xs font-data-mono font-bold text-white tracking-tighter" id="coord-y">-58.129331</span>
+<div class="bg-black/60 p-3 rounded-xl border border-white/10">
+<span class="text-[8px] font-black text-on-surface-variant uppercase block mb-1">Longitude / Y</span>
+<span class="text-xs font-data-mono font-bold text-white tracking-tighter" id="coord-y">-58.129347</span>
 </div>
-<div class="bg-black/40 p-2 rounded-lg border border-white/5">
-<span class="text-[8px] font-bold text-on-surface-variant uppercase block">Altitude / Z</span>
-<span class="text-xs font-data-mono font-bold text-emerald-400 tracking-tighter" id="coord-z">+12.441m</span>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<span class="text-[10px] text-on-surface font-bold uppercase">CAD Overlay Opacity</span>
-<input class="flex-grow h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" oninput="updateOpacity(this.value)" type="range" value="80"/>
+<div class="bg-black/60 p-3 rounded-xl border border-white/10">
+<span class="text-[8px] font-black text-on-surface-variant uppercase block mb-1">Altitude / Z</span>
+<span class="text-xs font-data-mono font-bold text-emerald-400 tracking-tighter" id="coord-z">+12.446m</span>
 </div>
 </div>
-<!-- Main Stakeout Buttons -->
-<div class="flex gap-4 h-20">
-<button class="flex-1 glass-panel text-white rounded-2xl font-bold uppercase text-xs active:bg-white/20 transition-all border-2 border-white/30 shadow-xl flex flex-col items-center justify-center gap-1" id="snap-cad-btn">
-<span class="material-symbols-outlined">center_focus_weak</span>
+<div class="flex items-center gap-4 px-1">
+<span class="text-[10px] text-on-surface font-bold uppercase whitespace-nowrap">CAD Opacity</span>
+<input class="flex-grow h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" oninput="updateOpacity(this.value)" type="range" value="80"/>
+</div>
+</div>
+<!-- Primary Actions -->
+<div class="grid grid-cols-3 gap-4 h-24">
+<button class="col-span-1 glass-panel text-white rounded-2xl font-bold uppercase text-[10px] active:bg-white/20 transition-all border-2 border-white/30 shadow-xl flex flex-col items-center justify-center gap-2" id="snap-cad-btn">
+<span class="material-symbols-outlined text-2xl">center_focus_weak</span>
                     Snap to CAD
                 </button>
-<button class="flex-[2] bg-primary text-white rounded-2xl font-black uppercase text-lg active:scale-95 transition-all shadow-[0_10px_30px_rgba(249,115,22,0.4)] border-2 border-white/30 flex items-center justify-center gap-3" id="confirm-point-btn">
-<span class="material-symbols-outlined text-3xl">radio_button_checked</span>
+<button class="col-span-2 bg-primary text-white rounded-2xl font-black uppercase text-xl active:scale-95 transition-all shadow-[0_15px_35px_rgba(249,115,22,0.5)] border-2 border-white/30 flex items-center justify-center gap-4" id="confirm-point-btn">
+<span class="material-symbols-outlined text-4xl">radio_button_checked</span>
                     Confirm Point
                 </button>
 </div>
 </div>
 </div>
 <!-- Layer Management Drawer -->
-<div class="fixed inset-y-0 right-0 w-72 glass-panel z-50 border-l-2 border-primary/30 transition-drawer drawer-closed shadow-[-20px_0_40px_rgba(0,0,0,0.8)]" id="layer-drawer">
+<div class="fixed inset-y-0 right-0 w-80 glass-panel z-50 border-l-2 border-primary/30 transition-drawer drawer-closed shadow-[-20px_0_60px_rgba(0,0,0,0.9)] safe-top" id="layer-drawer">
 <div class="p-6 h-full flex flex-col">
-<div class="flex justify-between items-center mb-8">
-<h3 class="text-sm font-headline-lg font-bold uppercase tracking-tight text-primary">Map Layers</h3>
-<button class="material-symbols-outlined text-white p-2" onclick="toggleDrawer()">close</button>
+<div class="flex justify-between items-center mb-10">
+<h3 class="text-base font-headline-lg font-black uppercase tracking-widest text-primary">Map Layers</h3>
+<button class="material-symbols-outlined text-white p-2 bg-white/5 rounded-full" onclick="toggleDrawer()">close</button>
 </div>
 <div class="space-y-4 flex-grow">
-<label class="flex items-center justify-between p-4 bg-black/40 rounded-xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary">foundation</span>
+<label class="flex items-center justify-between p-5 bg-black/60 rounded-2xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">foundation</span>
 <span class="text-sm font-bold uppercase">Beams / Vigas</span>
 </div>
-<input checked="" class="rounded-full text-primary focus:ring-primary h-6 w-6 border-2 border-white/20" onchange="toggleLayer('layer-vigas', this.checked)" type="checkbox"/>
+<input checked="" class="rounded-full text-primary focus:ring-primary h-7 w-7 border-2 border-white/20" onchange="toggleLayer('layer-vigas', this.checked)" type="checkbox"/>
 </label>
-<label class="flex items-center justify-between p-4 bg-black/40 rounded-xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary">column_line</span>
-<span class="text-sm font-bold uppercase">Columns</span>
+<label class="flex items-center justify-between p-5 bg-black/60 rounded-2xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">column_line</span>
+<span class="text-sm font-bold uppercase">Columns / Col.</span>
 </div>
-<input class="rounded-full text-primary focus:ring-primary h-6 w-6 border-2 border-white/20" onchange="toggleLayer('layer-columnas', this.checked)" type="checkbox"/>
+<input checked="" class="rounded-full text-primary focus:ring-primary h-7 w-7 border-2 border-white/20" onchange="toggleLayer('layer-columnas', this.checked)" type="checkbox"/>
 </label>
-<label class="flex items-center justify-between p-4 bg-black/40 rounded-xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-primary">layers</span>
-<span class="text-sm font-bold uppercase">Slabs / Losas</span>
+<label class="flex items-center justify-between p-5 bg-black/60 rounded-2xl border-2 border-white/10 cursor-pointer active:bg-primary/20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">grid_4x4</span>
+<span class="text-sm font-bold uppercase">Axes / Ejes</span>
 </div>
-<input class="rounded-full text-primary focus:ring-primary h-6 w-6 border-2 border-white/20" onchange="toggleLayer('layer-slabs', this.checked)" type="checkbox"/>
+<input checked="" class="rounded-full text-primary focus:ring-primary h-7 w-7 border-2 border-white/20" onchange="toggleLayer('layer-ejes', this.checked)" type="checkbox"/>
 </label>
 </div>
-<div class="pt-6 border-t border-white/10 space-y-4">
-<div class="text-[10px] text-on-surface-variant font-bold uppercase">HUD Mode</div>
-<div class="flex gap-2">
-<button class="flex-1 bg-primary text-white text-[10px] py-3 rounded-lg uppercase font-black border border-white/20" onclick="updateContrast('high')">High Contrast</button>
-<button class="flex-1 bg-white/10 text-white text-[10px] py-3 rounded-lg uppercase font-bold" onclick="updateContrast('std')">Stealth</button>
+<div class="pt-8 border-t border-white/10 space-y-4 pb-12">
+<div class="text-[10px] text-on-surface-variant font-black uppercase tracking-widest">HUD Rendering</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="bg-primary text-white text-[11px] py-4 rounded-xl uppercase font-black border border-white/20 shadow-lg" onclick="updateContrast('high')">High Contrast</button>
+<button class="bg-white/10 text-white text-[11px] py-4 rounded-xl uppercase font-bold border border-white/10" onclick="updateContrast('std')">Stealth</button>
 </div>
 </div>
 </div>
 </div>
 </main>
-<!-- View Placeholder: Control / Verify / System (Simulated Content) -->
-<main class="view-section pt-16 px-6 text-center text-on-surface-variant" id="view-control">
-<div class="glass-panel p-8 rounded-3xl border-2 border-white/10">
-<span class="material-symbols-outlined text-6xl text-primary mb-4">dashboard</span>
-<h2 class="text-2xl font-headline-lg text-white font-bold mb-2">Project Control</h2>
-<p class="text-sm">Manage active missions and jobsite settings.</p>
+<!-- Secondary Views (Placeholders) -->
+<main class="view-section pt-24 px-6" id="view-control">
+<div class="glass-panel p-8 rounded-3xl border-2 border-white/10 text-center">
+<span class="material-symbols-outlined text-7xl text-primary mb-6">map</span>
+<h2 class="text-2xl font-headline-lg text-white font-bold mb-4 uppercase tracking-tighter">Site Control</h2>
+<p class="text-sm text-on-surface-variant mb-8">Manage site coordinates and local benchmarks.</p>
+<div class="space-y-3">
+<div class="p-4 bg-black/40 rounded-xl border border-white/5 text-left flex justify-between">
+<span class="font-bold text-xs uppercase">Active Job</span>
+<span class="font-data-mono text-primary text-xs font-bold">PLAN_A_SECTOR_4</span>
+</div>
+</div>
 </div>
 </main>
-<main class="view-section pt-16 px-6 text-center text-on-surface-variant" id="view-verify">
-<div class="glass-panel p-8 rounded-3xl border-2 border-white/10">
-<span class="material-symbols-outlined text-6xl text-emerald-400 mb-4">fact_check</span>
-<h2 class="text-2xl font-headline-lg text-white font-bold mb-2">QA/QC Verify</h2>
-<p class="text-sm">Compare as-built status against design models.</p>
-</div>
-</main>
-<main class="view-section pt-16 px-6 text-center text-on-surface-variant" id="view-system">
-<div class="glass-panel p-8 rounded-3xl border-2 border-white/10">
-<span class="material-symbols-outlined text-6xl text-on-surface-variant mb-4">settings</span>
-<h2 class="text-2xl font-headline-lg text-white font-bold mb-2">System Config</h2>
-<p class="text-sm">Sensors, Connectivity, and Hardware diagnostics.</p>
-</div>
-</main>
-<!-- Navigation -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-2xl border-t border-white/10 flex justify-around items-center p-3 pb-8">
-<button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-control" onclick="switchView('view-control')">
-<span class="material-symbols-outlined">map</span>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-3xl border-t border-white/10 flex justify-around items-center h-24 pb-8 safe-bottom">
+<button class="nav-btn flex flex-col items-center gap-1.5 text-on-surface-variant opacity-60 flex-1" id="nav-view-control" onclick="switchView('view-control')">
+<span class="material-symbols-outlined text-2xl">map</span>
 <span class="text-[9px] font-bold uppercase tracking-widest">Control</span>
 </button>
-<button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-verify" onclick="switchView('view-verify')">
-<span class="material-symbols-outlined">fact_check</span>
-<span class="text-[9px] font-bold uppercase tracking-widest">Verify</span>
-</button>
-<button class="nav-btn flex flex-col items-center gap-1 text-primary" id="nav-view-ar" onclick="switchView('view-ar')">
-<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center -mt-8 border-4 border-surface shadow-xl">
-<span class="material-symbols-outlined text-white">view_in_ar</span>
+<button class="nav-btn flex flex-col items-center gap-1.5 text-primary flex-1" id="nav-view-ar" onclick="switchView('view-ar')">
+<div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center -mt-10 border-4 border-surface shadow-2xl">
+<span class="material-symbols-outlined text-3xl text-white">view_in_ar</span>
 </div>
-<span class="text-[9px] font-bold uppercase tracking-widest">HUD AR</span>
+<span class="text-[9px] font-black uppercase tracking-widest">HUD AR</span>
 </button>
-<button class="nav-btn flex flex-col items-center gap-1 text-on-surface-variant opacity-60" id="nav-view-system" onclick="switchView('view-system')">
-<span class="material-symbols-outlined">settings_input_component</span>
+<button class="nav-btn flex flex-col items-center gap-1.5 text-on-surface-variant opacity-60 flex-1" id="nav-view-system" onclick="switchView('view-system')">
+<span class="material-symbols-outlined text-2xl">settings_input_component</span>
 <span class="text-[9px] font-bold uppercase tracking-widest">System</span>
 </button>
 </nav>
 <script>
     const video = document.getElementById('ar-camera-feed');
     const drawer = document.getElementById('layer-drawer');
+    const svgOverlay = document.getElementById('ar-vector-overlay');
 
     function toggleDrawer() {
         drawer.classList.toggle('drawer-closed');
@@ -331,37 +339,36 @@
     }
 
     function updateOpacity(val) {
-        document.getElementById('ar-vector-overlay').style.opacity = val / 100;
+        svgOverlay.style.opacity = val / 100;
     }
 
     function updateContrast(type) {
-        const svg = document.getElementById('ar-vector-overlay');
-        const labels = document.querySelectorAll('.high-vis-text');
         if (type === 'high') {
-            svg.setAttribute('stroke-width', '6');
-            svg.style.filter = 'drop-shadow(0 0 4px rgba(0,0,0,1)) brightness(1.5)';
+            svgOverlay.setAttribute('stroke-width', '6');
+            svgOverlay.style.filter = 'drop-shadow(0 0 4px rgba(0,0,0,1)) brightness(1.5)';
         } else {
-            svg.setAttribute('stroke-width', '4');
-            svg.style.filter = 'none';
+            svgOverlay.setAttribute('stroke-width', '3');
+            svgOverlay.style.filter = 'none';
         }
     }
 
     async function initCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "environment", focusMode: "continuous" },
+                video: { facingMode: "environment" },
                 audio: false 
             });
             video.srcObject = stream;
         } catch (err) {
-            console.warn("Camera access denied or unavailable. Static mode engaged.");
+            console.warn("Camera fallback: Simulated dark feed.");
             video.style.background = "#000"; 
         }
     }
 
     function switchView(viewId) {
         document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
+        const targetView = document.getElementById(viewId);
+        if(targetView) targetView.classList.add('active');
         
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.add('opacity-60', 'text-on-surface-variant');
@@ -373,74 +380,58 @@
             if(viewId !== 'view-ar') activeBtn.classList.add('text-primary');
         }
 
-        // Only keep camera active on AR HUD
         if(viewId === 'view-ar') {
             initCamera();
-        } else if (video.srcObject) {
-            video.srcObject.getTracks().forEach(track => track.stop());
+        } else {
             drawer.classList.add('drawer-closed');
             drawer.classList.remove('drawer-open');
         }
         window.scrollTo(0,0);
     }
 
-    // AR Simulation Logic
-    const sensorData = {
-        lat: 34.829122,
-        lng: -58.129331,
-        alt: 12.441,
-        range: 14.285
-    };
+    // AR Dynamic Simulation
+    const sensorData = { lat: 34.829119, lng: -58.129347, alt: 12.446, range: 14.302 };
 
     setInterval(() => {
         if(document.getElementById('view-ar').classList.contains('active')) {
-            sensorData.lat += (Math.random() - 0.5) * 0.00001;
-            sensorData.lng += (Math.random() - 0.5) * 0.00001;
-            sensorData.alt += (Math.random() - 0.5) * 0.002;
-            sensorData.range += (Math.random() - 0.5) * 0.005;
+            sensorData.lat += (Math.random() - 0.5) * 0.000005;
+            sensorData.lng += (Math.random() - 0.5) * 0.000005;
+            sensorData.alt += (Math.random() - 0.5) * 0.003;
+            sensorData.range += (Math.random() - 0.5) * 0.004;
 
-            document.getElementById('coord-x').innerText = sensorData.lat.toFixed(6);
-            document.getElementById('coord-y').innerText = sensorData.lng.toFixed(6);
+            document.getElementById('coord-x').innerText = (sensorData.lat > 0 ? '+' : '') + sensorData.lat.toFixed(6);
+            document.getElementById('coord-y').innerText = (sensorData.lng > 0 ? '+' : '') + sensorData.lng.toFixed(6);
             document.getElementById('coord-z').innerText = (sensorData.alt >= 0 ? '+' : '') + sensorData.alt.toFixed(3) + 'm';
             document.getElementById('lidar-range').innerText = sensorData.range.toFixed(3) + 'm';
             
-            const stabilityVal = (99.7 + Math.random() * 0.3).toFixed(1);
-            document.getElementById('gyro-stability').innerText = stabilityVal + '%';
+            document.getElementById('gyro-stability').innerText = (99.7 + Math.random() * 0.3).toFixed(1) + '%';
 
-            // Floating effect for overlay
-            const svg = document.getElementById('ar-vector-overlay');
-            const jitterX = Math.sin(Date.now() / 200) * 0.5;
-            const jitterY = Math.cos(Date.now() / 250) * 0.5;
-            svg.style.transform = `translate(${jitterX}px, ${jitterY}px)`;
+            // Jitter for AR effect
+            const jitterX = Math.sin(Date.now() / 300) * 0.8;
+            const jitterY = Math.cos(Date.now() / 350) * 0.8;
+            svgOverlay.style.transform = `translate(${jitterX}px, ${jitterY}px)`;
         }
     }, 50);
 
-    // Button Events
+    // Interaction Handlers
     document.getElementById('confirm-point-btn').addEventListener('click', function() {
-        const originalText = this.innerHTML;
+        const originalContent = this.innerHTML;
         this.classList.replace('bg-primary', 'bg-emerald-500');
-        this.innerHTML = '<span class="material-symbols-outlined text-3xl">done_all</span> CAPTURED';
-        
-        // Haptic feedback simulation
-        if (window.navigator.vibrate) window.navigator.vibrate(50);
-        
+        this.innerHTML = '<span class="material-symbols-outlined text-4xl">check_circle</span> CAPTURED';
+        if (window.navigator.vibrate) window.navigator.vibrate(80);
         setTimeout(() => {
             this.classList.replace('bg-emerald-500', 'bg-primary');
-            this.innerHTML = originalText;
+            this.innerHTML = originalContent;
         }, 1500);
     });
 
     document.getElementById('snap-cad-btn').addEventListener('click', function() {
-        const svg = document.getElementById('ar-vector-overlay');
-        svg.style.transition = 'all 0.1s ease-out';
-        svg.style.transform = 'scale(1.01) brightness(1.2)';
-        if (window.navigator.vibrate) window.navigator.vibrate(20);
-        setTimeout(() => {
-            svg.style.transform = 'scale(1)';
-        }, 100);
+        svgOverlay.classList.remove('cad-lock-pulse');
+        void svgOverlay.offsetWidth; // Trigger reflow
+        svgOverlay.classList.add('cad-lock-pulse');
+        if (window.navigator.vibrate) window.navigator.vibrate([20, 10, 20]);
     });
 
-    // Upload Handler
     document.getElementById('cad-upload-input').addEventListener('change', function() {
         if(this.files.length > 0) {
             const hud = document.getElementById('upload-status-hud');
@@ -449,21 +440,18 @@
             hud.classList.remove('hidden');
             let p = 0;
             const interval = setInterval(() => {
-                p += 4;
+                p += 5;
                 bar.style.width = p + '%';
-                if(p > 90) text.innerText = 'Syncing...';
+                if(p > 80) text.innerText = 'Indexing...';
                 if(p >= 100) {
                     clearInterval(interval);
-                    text.innerText = 'Loaded';
+                    text.innerText = 'Ready';
                     setTimeout(() => hud.classList.add('hidden'), 2000);
                 }
-            }, 50);
+            }, 60);
         }
     });
 
-    // Initialize
-    window.addEventListener('load', () => {
-        initCamera();
-    });
+    window.addEventListener('load', initCamera);
 </script>
 </body></html>
