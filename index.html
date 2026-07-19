@@ -8,11 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
+        :root {
+            --primary: #f97316;
+            --surface: #1c110b;
+        }
         .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(28, 17, 11, 0.7);
             backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .led-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -28,13 +31,13 @@
             background: rgba(255, 255, 255, 0.05);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(249, 115, 22, 0.3);
+            background: #f973164d;
             border-radius: 10px;
         }
         .scanline {
             width: 100%;
             height: 2px;
-            background: rgba(255, 182, 144, 0.3);
+            background: rgba(249, 115, 22, 0.2);
             position: absolute;
             top: 0;
             left: 0;
@@ -58,30 +61,13 @@
             animation: progress-stripes 1s linear infinite;
         }
 
-        /* Camera Feed Placeholder Animation */
-        @keyframes noise {
-            0% { transform: translate(0,0) }
-            10% { transform: translate(-5%,-5%) }
-            20% { transform: translate(-10%,5%) }
-            30% { transform: translate(5%,-10%) }
-            40% { transform: translate(-5%,15%) }
-            50% { transform: translate(-10%,5%) }
-            60% { transform: translate(15%,0) }
-            70% { transform: translate(0,10%) }
-            80% { transform: translate(-15%,0) }
-            90% { transform: translate(10%,5%) }
-            100% { transform: translate(5%,0) }
-        }
-        .camera-noise::before {
-            content: "";
+        #ar-camera-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat;
-            opacity: 0.05;
-            animation: noise .5s infinite;
+            inset: 0;
+            z-index: 0;
         }
     </style>
 <script id="tailwind-config">
@@ -90,25 +76,23 @@
           theme: {
             extend: {
               "colors": {
-                "surface": "#1c110b",
-                "background": "#1c110b",
-                "primary": "#ffb690",
+                "primary": "#f97316",
+                "on-primary": "#ffffff",
                 "primary-container": "#f97316",
-                "on-primary": "#552100",
-                "on-primary-container": "#582200",
-                "secondary": "#b9c7e0",
-                "tertiary": "#93ccff",
+                "on-primary-container": "#ffffff",
+                "surface": "#1c110b",
+                "surface-dim": "#1c110b",
+                "surface-bright": "#45362f",
+                "surface-container": "#291d16",
+                "surface-container-high": "#352720",
                 "on-surface": "#f6ded3",
                 "on-surface-variant": "#e0c0b1",
                 "outline": "#a78b7d",
-                "surface-container": "#291d16",
-                "surface-container-high": "#352720",
-                "surface-container-highest": "#40322a",
                 "error": "#ffb4ab",
                 "on-error": "#690005"
               },
               "borderRadius": {
-                "DEFAULT": "0.25rem",
+                "DEFAULT": "0.5rem",
                 "lg": "0.5rem",
                 "xl": "0.75rem"
               },
@@ -158,14 +142,14 @@
 <div class="h-40 relative">
 <img class="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxk1ESfpS89lgwNs_Yp1RRUZw8X7kkODGsDeUHLsxJbj5tXn7MpiaRC7ll5vDlAmnF1Y7S0pje1BzFCDL4xTmypVDW9IvhEmiljlsfKQ4hOy0MpC7I6-e892v-1qFga-DvrfBTePeDKI5zzkGF6n12w6mfZVfA3_b_xQguzKMFrnoCtul3WenUWQMvNPOg5898iz16jqR2UIbtHPuZit9K7TXCzHdaISc1z6OSYRbm79KuocGarClC"/>
 <div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
-<span class="absolute top-3 left-3 bg-primary text-on-primary text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Sesión Activa</span>
+<span class="absolute top-3 left-3 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Sesión Activa</span>
 </div>
 <div class="p-5 flex justify-between items-center">
 <div>
 <h2 class="text-xl font-headline-lg">RECONQUISTA SF</h2>
 <p class="text-xs text-on-surface-variant">Zona Industrial • Santa Fe, AR</p>
 </div>
-<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-bold active:scale-95 transition-transform uppercase" onclick="switchView('view-ar')">Abrir HUD</button>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-bold active:scale-95 transition-transform uppercase" onclick="switchView('view-ar')">Abrir HUD</button>
 </div>
 </section>
 <!-- Carga de Planos Section -->
@@ -199,9 +183,9 @@
 <span class="text-[9px] text-emerald-400 font-data-mono uppercase">Live</span>
 </div>
 <div class="p-4 h-32 overflow-y-auto custom-scrollbar font-data-mono text-[11px] space-y-1 opacity-70" id="system-log-content">
-<div class="flex gap-2"><span class="">[16:40]</span> <span class="text-on-surface">Motor LiDAR inicializado.</span></div>
-<div class="flex gap-2"><span class="">[16:41]</span> <span class="text-emerald-400">Sincronización GPS: Reconquista, SF.</span></div>
-<div class="flex gap-2"><span class="">[16:42]</span> <span class="text-primary">Plano 1.dwg cargado correctamente.</span></div>
+<div class="flex gap-2"><span>[16:40]</span> <span class="text-on-surface">Motor LiDAR inicializado.</span></div>
+<div class="flex gap-2"><span>[16:41]</span> <span class="text-emerald-400">Sincronización GPS: Reconquista, SF.</span></div>
+<div class="flex gap-2"><span>[16:42]</span> <span class="text-primary">Plano 1.dwg cargado correctamente.</span></div>
 </div>
 </section>
 </main>
@@ -238,7 +222,7 @@
 <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden mb-6">
 <div class="h-full bg-primary progress-animate" style="width: 42%;"></div>
 </div>
-<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold flex items-center justify-center gap-2 uppercase" onclick="switchView('view-ar')">
+<button class="w-full mt-6 bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 uppercase" onclick="switchView('view-ar')">
 <span class="material-symbols-outlined text-lg">view_in_ar</span> Lanzar HUD AR
                     </button>
 </div>
@@ -246,47 +230,47 @@
 </div>
 </main>
 <!-- View: AR Experience (HUD) -->
-<main class="view-section fixed inset-0 z-40 bg-zinc-900 pt-20 overflow-hidden" id="view-ar">
-<!-- AR Camera Feed Placeholder (Animated Noise/Dark Surface) -->
-<div class="absolute inset-0 bg-[#0a0a0a] camera-noise"></div>
+<main class="view-section fixed inset-0 z-40 bg-black pt-20 overflow-hidden" id="view-ar">
+<!-- Real Camera Feed -->
+<video autoplay="" id="ar-camera-feed" muted="" playsinline=""></video>
 <!-- CAD Vector Overlay (High Contrast Brand Orange) -->
-<svg class="absolute inset-0 w-full h-full pointer-events-none opacity-90" id="ar-vector-overlay" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10" id="ar-vector-overlay" viewbox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <pattern height="40" id="grid-ar" patternunits="userSpaceOnUse" width="40">
-<path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,182,144,0.08)" stroke-width="0.5"></path>
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(249, 115, 22, 0.15)" stroke-width="0.5"></path>
 </pattern>
 </defs>
 <rect fill="url(#grid-ar)" height="100%" width="100%"></rect>
 <!-- CAD Lines: Plano 1.dwg - Structural Beams -->
-<g class="cad-layer-beams" stroke="#ffb690" stroke-width="1.8">
-<path d="M 50 200 L 350 200 L 350 300 L 50 300 Z" fill="rgba(255,182,144,0.1)"></path>
-<path d="M 50 350 L 350 350 L 350 450 L 50 450 Z" fill="rgba(255,182,144,0.1)"></path>
-<path d="M 50 500 L 350 500 L 350 600 L 50 600 Z" fill="rgba(255,182,144,0.1)"></path>
+<g class="cad-layer-beams" stroke="#f97316" stroke-width="2">
+<path d="M 50 200 L 350 200 L 350 300 L 50 300 Z" fill="rgba(249, 115, 22, 0.15)"></path>
+<path d="M 50 350 L 350 350 L 350 450 L 50 450 Z" fill="rgba(249, 115, 22, 0.15)"></path>
+<path d="M 50 500 L 350 500 L 350 600 L 50 600 Z" fill="rgba(249, 115, 22, 0.15)"></path>
 <!-- Cross Bracing -->
-<path d="M 50 200 L 350 300" opacity="0.5" stroke-dasharray="4 4"></path>
-<path d="M 350 200 L 50 300" opacity="0.5" stroke-dasharray="4 4"></path>
+<path d="M 50 200 L 350 300" opacity="0.6" stroke-dasharray="6 4"></path>
+<path d="M 350 200 L 50 300" opacity="0.6" stroke-dasharray="6 4"></path>
 </g>
 <!-- Annotations -->
-<text fill="#ffb690" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="200" y="190">VIGA_PRINCIPAL_01 [24.50m]</text>
+<text fill="#f97316" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" x="200" y="190">VIGA_PRINCIPAL_01 [24.50m]</text>
 <!-- Calibration Crosshair -->
-<line stroke="rgba(255,255,255,0.1)" stroke-width="0.5" x1="0" x2="400" y1="400" y2="400"></line>
-<line stroke="rgba(255,255,255,0.1)" stroke-width="0.5" x1="200" x2="200" y1="0" y2="800"></line>
+<line stroke="rgba(255,255,255,0.2)" stroke-width="0.5" x1="0" x2="400" y1="400" y2="400"></line>
+<line stroke="rgba(255,255,255,0.2)" stroke-width="0.5" x1="200" x2="200" y1="0" y2="800"></line>
 </svg>
-<div class="scanline"></div>
+<div class="scanline z-20"></div>
 <!-- HUD Overlays -->
-<div class="absolute inset-0 p-container-margin flex flex-col pointer-events-none pt-24 pb-32">
+<div class="absolute inset-0 p-container-margin flex flex-col pointer-events-none pt-24 pb-32 z-30">
 <div class="flex justify-between items-start">
 <div class="space-y-2 pointer-events-auto">
 <div class="glass-panel p-3 rounded-lg border border-primary/40 flex items-center gap-3">
 <div class="w-2 h-2 bg-primary led-pulse"></div>
-<span class="text-[10px] font-bold uppercase tracking-widest">CAPA ACTIVA: VIGAS</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">CAPA ACTIVA: VIGAS</span>
 </div>
 <div class="glass-panel p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 flex items-center gap-3">
 <span class="material-symbols-outlined text-emerald-400 text-sm">description</span>
-<span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">PLANO ACTIVO: PLANO 1.DWG</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">PLANO ACTIVO: RECONQUISTA_V1.DWG</span>
 </div>
 </div>
-<div class="glass-panel p-3 rounded-lg text-right pointer-events-auto">
+<div class="glass-panel p-3 rounded-lg text-right pointer-events-auto border border-white/10">
 <div class="text-[9px] text-on-surface-variant uppercase">Estabilidad Gyro</div>
 <div class="text-lg font-data-mono text-primary" id="gyro-stability">99.8%</div>
 </div>
@@ -298,7 +282,7 @@
 <div class="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary"></div>
 <div class="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary"></div>
 <div class="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-primary"></div>
-<div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#f97316]"></div>
 </div>
 </div>
 <div class="flex flex-col gap-4 pointer-events-auto">
@@ -311,8 +295,8 @@
 </div>
 </div>
 <div class="flex gap-2">
-<button class="flex-1 bg-white/10 backdrop-blur-md py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-transform border border-white/10">Snap to CAD</button>
-<button class="flex-1 bg-primary text-on-primary py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-transform shadow-lg shadow-primary/20" id="confirm-point-btn">Confirm Point</button>
+<button class="flex-1 bg-surface-container-high/80 backdrop-blur-md py-4 rounded-xl font-bold uppercase text-xs active:bg-primary active:text-white transition-all border border-white/10" id="snap-cad-btn">Snap to CAD</button>
+<button class="flex-1 bg-primary text-white py-4 rounded-xl font-bold uppercase text-xs active:scale-95 transition-all shadow-lg shadow-primary/20 border border-primary/50" id="confirm-point-btn">Confirm Point</button>
 </div>
 </div>
 </div>
@@ -346,7 +330,7 @@
 <div class="text-2xl font-data-mono mt-1">02:15:10</div>
 </div>
 </section>
-<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-xl font-bold text-lg shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3 uppercase">
+<button class="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3 uppercase">
 <span class="material-symbols-outlined">archive</span> Generar Reporte Final
 </button>
 </main>
@@ -371,6 +355,22 @@
 </nav>
 <!-- SPA logic -->
 <script>
+        const video = document.getElementById('ar-camera-feed');
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment" },
+                    audio: false 
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                // Fallback style for simulation if camera is blocked
+                video.style.background = "#0f172a"; 
+            }
+        }
+
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(view => {
                 view.classList.remove('active');
@@ -386,6 +386,14 @@
                 activeBtn.classList.remove('opacity-60', 'text-on-surface-variant');
                 activeBtn.classList.add('text-primary');
             }
+
+            if(viewId === 'view-ar') {
+                initCamera();
+            } else if (video.srcObject) {
+                // Stop camera when not in AR view to save battery
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+
             window.scrollTo(0,0);
         }
 
@@ -398,13 +406,16 @@
             stability: document.getElementById('gyro-stability')
         };
 
+        // Simulated drift logic
+        let driftSpeed = 0.0001;
+        
         setInterval(() => {
             const activeAr = document.getElementById('view-ar').classList.contains('active');
             if(activeAr) {
-                // Simulate device micro-movement
-                coords.x += (Math.random() - 0.5) * 0.0005;
-                coords.y += (Math.random() - 0.5) * 0.0005;
-                coords.z += (Math.random() - 0.5) * 0.0002;
+                // Simulate device micro-movement and sensor drift
+                coords.x += (Math.random() - 0.5) * 0.0008 + driftSpeed;
+                coords.y += (Math.random() - 0.5) * 0.0008 - driftSpeed;
+                coords.z += (Math.random() - 0.5) * 0.0003;
                 
                 coordEls.x.innerText = (coords.x >= 0 ? '+' : '') + coords.x.toFixed(4);
                 coordEls.y.innerText = (coords.y >= 0 ? '+' : '') + coords.y.toFixed(4);
@@ -413,17 +424,43 @@
                 // Stability jitter
                 const stabilityVal = (99.5 + Math.random() * 0.4).toFixed(1);
                 coordEls.stability.innerText = stabilityVal + '%';
+                
+                // Subtle SVG parallax effect simulation
+                const svg = document.getElementById('ar-vector-overlay');
+                const tiltX = Math.sin(Date.now() / 1000) * 2;
+                const tiltY = Math.cos(Date.now() / 1200) * 2;
+                svg.style.transform = `translate(${tiltX}px, ${tiltY}px)`;
             }
-        }, 150);
+        }, 100);
 
-        // Confirm Point Button Interaction
+        // Functional Button Interactions
         document.getElementById('confirm-point-btn').addEventListener('click', function() {
-            this.classList.add('bg-emerald-500', 'text-white');
+            const originalText = this.innerText;
+            this.classList.remove('bg-primary');
+            this.classList.add('bg-emerald-500', 'border-emerald-400');
             this.innerText = 'POINT CAPTURED';
+            
+            // Flash effect on coordinate log
+            const logEntry = document.createElement('div');
+            logEntry.className = 'flex gap-2 animate-pulse';
+            logEntry.innerHTML = `<span>[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]</span> <span class="text-emerald-400">Point Captured: X:${coords.x.toFixed(3)} Y:${coords.y.toFixed(3)}</span>`;
+            document.getElementById('system-log-content').prepend(logEntry);
+
             setTimeout(() => {
-                this.classList.remove('bg-emerald-500', 'text-white');
-                this.innerText = 'CONFIRM POINT';
-            }, 2000);
+                this.classList.add('bg-primary');
+                this.classList.remove('bg-emerald-500', 'border-emerald-400');
+                this.innerText = originalText;
+            }, 1500);
+        });
+
+        document.getElementById('snap-cad-btn').addEventListener('click', function() {
+            this.classList.add('bg-primary', 'text-white');
+            const svg = document.getElementById('ar-vector-overlay');
+            svg.classList.add('scale-105');
+            setTimeout(() => {
+                this.classList.remove('bg-primary', 'text-white');
+                svg.classList.remove('scale-105');
+            }, 300);
         });
 
         // Upload Simulation
@@ -439,7 +476,7 @@
             const steps = [
               { p: 30, t: 'Reading Layer: VIGAS...' },
               { p: 60, t: 'Calibrating Coord System...' },
-              { p: 100, t: 'Plano 1.dwg Ready' }
+              { p: 100, t: 'RECONQUISTA_V1.DWG Ready' }
             ];
 
             container.addEventListener('click', () => {
@@ -463,6 +500,11 @@
                     setTimeout(() => {
                       progress.classList.add('hidden');
                       success.classList.remove('hidden');
+                      // Update system log
+                      const logEntry = document.createElement('div');
+                      logEntry.className = 'flex gap-2';
+                      logEntry.innerHTML = `<span>[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]</span> <span class="text-primary">RECONQUISTA_V1.DWG loaded.</span>`;
+                      document.getElementById('system-log-content').prepend(logEntry);
                     }, 400);
                   }
                 }, 800);
