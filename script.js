@@ -1,7 +1,7 @@
-# 3. script.js (ACTUALIZADO)
+# 3. script.js (CÓDIGO COMPLETO v3.0)
 
-Copia este código en tu archivo `script.js` en GitHub:
+Copia todo este código en tu archivo `script.js` en GitHub:
 
 ```javascript
-{{DATA:SCREEN:SCREEN_58}} JS source
+{{DATA:SCREEN:SCREEN_135}} JS source
 ```
